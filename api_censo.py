@@ -42,13 +42,13 @@ class CensoRepository:
 
     GBA_PARTIDOS = { # Recodificación GBA/interior - solo para encuestas de Buenos Aires.
         "almirante brown", "avellaneda", "berazategui", "berisso", 
-        "brandsen", "campana", "cañuelas", "ensenada", "escobrar", 
-        "esteban echeverría", "excaltación de la cruz", "ezeiza", 
+        "brandsen", "campana", "cañuelas", "ensenada", "escobar", 
+        "esteban echeverría", "exaltación de la cruz", "ezeiza", 
         "florencio varela", "general las heras", "general rodríguez", 
         "general san martín", "lanús", "la plata", "lomas de zamora", "luján", 
         "marcos paz", "malvinas argentinas", "merlo", "moreno", "morón", 
         "pilar", "presidente perón", "quilmes", "san fernando", 
-        "san isidro", "san miguel", "san vicente", "tigre"
+        "san isidro", "san miguel", "san vicente", "tigre", 
         "tres de febrero", "vicente lópez"
         }
 
