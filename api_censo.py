@@ -40,6 +40,18 @@ class CensoRepository:
         "tucuman":               "Tucumán",
     }
 
+    GBA_PARTIDOS = { # Recodificación GBA/interior - solo para encuestas de Buenos Aires.
+        "almirante brown", "avellaneda", "berazategui", "berisso", 
+        "brandsen", "campana", "cañuelas", "ensenada", "escobrar", 
+        "esteban echeverría", "excaltación de la cruz", "ezeiza", 
+        "florencio varela", "general las heras", "general rodríguez", 
+        "general san martín", "lanús", "la plata", "lomas de zamora", "luján", 
+        "marcos paz", "malvinas argentinas", "merlo", "moreno", "morón", 
+        "pilar", "presidente perón", "quilmes", "san fernando", 
+        "san isidro", "san miguel", "san vicente", "tigre"
+        "tres de febrero", "vicente lópez"
+        }
+
     _SEXO = {  #sexo por regiones
         "nacional":              {"femenino": 0.519, "masculino": 0.481},
         "gba":                   {"femenino": 0.521, "masculino": 0.479},
@@ -80,6 +92,7 @@ class CensoRepository:
         "interior": 0.368,   
     }
 
+    
     _EDAD = { # Proporción de población 18+ por grupo etario
         "nacional":              {"16-29": 0.202, "30-44": 0.284, "45-59": 0.237, "60+": 0.277},
         "gba":                   {"16-29": 0.218, "30-44": 0.293, "45-59": 0.232, "60+": 0.257},
