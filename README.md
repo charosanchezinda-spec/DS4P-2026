@@ -44,7 +44,6 @@ El sistema necesita dos terminales abiertas al mismo tiempo.
 
 **Terminal 1 — API:**
 ```bash
-conda activate local
 cd C:\ruta\al\proyecto
 python -m uvicorn api_censo:app --reload
 ```
@@ -53,7 +52,6 @@ Verificar que está corriendo en: `http://localhost:8000`
 
 **Terminal 2 — Frontend:**
 ```bash
-conda activate local
 cd C:\ruta\al\proyecto
 streamlit run app.py
 ```
