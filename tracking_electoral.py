@@ -67,7 +67,7 @@ def cargar_datos(ruta):
         print(f"Error inesperado al cargar el archivo: {e}")
     return None
 
-ruta = "C:/Users/charo/Downloads/DS4P/encuesta_ficticia_nacional.csv"   # ← cambiar por la ruta real
+ruta = "ruta/a/tu/archivo.csv"   # ← cambiar por la ruta real
 df = cargar_datos(ruta)
 
 df.columns = (
@@ -136,22 +136,6 @@ GBA_PARTIDOS = { # Recodificación GBA/interior - solo para encuestas de Buenos 
         "san isidro", "san miguel", "san vicente", "tigre", 
         "tres de febrero", "vicente lópez"
         }
-
-# Verificar si la encuesta tiene municipios bonaerenses
-hay_municipios_bsas = False
-for estrato in df['estrato'].astype(str).str.lower().str.strip().unique():
-    if estrato in GBA_PARTIDOS:
-        hay_municipios_bsas = True
-        break
-if hay_municipios_bsas:
-    print("Municipios bonaerenses detectados en 'estrato'. Recodificando en GBA/interior...")
-    zonas = []
-    for estrato in df['estrato'].astype(str).str.lower().str.strip():
-        if estrato in GBA_PARTIDOS:
-            zonas.append("gba")
-        else:
-            zonas.append("interior")
-    df['estrato_bsas'] = zonas
 
 # %%
 # Quinto Paso: calcular los valores faltantes para las VD
