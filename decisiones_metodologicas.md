@@ -99,8 +99,6 @@ Dentro de cada función de raking, después de calcular los pesos, el sistema ev
 
 El sistema ofrece tres ventanas: diaria, semanal y mensual. La ventana se elige por el usuario al momento de correr el análisis.
 
-Con 1000 casos en 6 meses, la ventana diaria produce ventanas de 5 a 7 casos en promedio. Eso es insuficiente para una calibración correcta y genera pesos extremos. Las advertencias automáticas del sistema detectan y reportan este problema. La ventana semanal o mensual es más apropiada para muestras de ese tamaño.
-
 ---
 
 ## 9. Imputación de valores faltantes
