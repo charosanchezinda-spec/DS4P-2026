@@ -124,3 +124,15 @@ df['edad_cat'] = pd.cut(
     bins=[15, 29, 44, 59, 120],
     labels=['16-29', '30-44', '45-59', '60+']
 )
+
+GBA_PARTIDOS = { # Recodificación GBA/interior - solo para encuestas de Buenos Aires.
+        "almirante brown", "avellaneda", "berazategui", "berisso", 
+        "brandsen", "campana", "cañuelas", "ensenada", "escobar", 
+        "esteban echeverría", "exaltación de la cruz", "ezeiza", 
+        "florencio varela", "general las heras", "general rodríguez", 
+        "general san martín", "lanús", "la plata", "lomas de zamora", "luján", 
+        "marcos paz", "malvinas argentinas", "merlo", "moreno", "morón", 
+        "pilar", "presidente perón", "quilmes", "san fernando", 
+        "san isidro", "san miguel", "san vicente", "tigre", 
+        "tres de febrero", "vicente lópez"
+        }
