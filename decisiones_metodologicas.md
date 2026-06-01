@@ -63,7 +63,7 @@ El sistema no pondera por municipio por defecto. Esta decisión responde a dos l
 
 **Pesos extremos.** Si un municipio concentra mucha población pero tiene pocos casos en la muestra, el peso resultante puede ser muy alto, distorsionando las estimaciones.
 
-La distinción GBA/interior sí está implementada para encuestas de la Provincia de Buenos Aires, porque es la única jurisdicción donde esa división tiene consenso metodológico establecido, peso electoral suficiente y datos del Censo 2022 disponibles.
+La distinción GBA/interior sí está implementada para encuestas de la Provincia de Buenos Aires, dada la complejidad de esta provincia, donde suele haber un patrón de voto muy marcado y diferente entre el interior y el Gran Buenos Aires.
 
 ---
 
