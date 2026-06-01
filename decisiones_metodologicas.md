@@ -5,7 +5,7 @@
 
 ## 1. Problema que resuelve el sistema
 
-En la práctica del trabajo de campo, las encuestas producen sesgos muestrales: ciertos perfiles de la población quedan sistematicamente sobre o subrepresentados respecto a su peso real en el universo. Esos sesgos no son una falla del diseño sino una consecuencia inevitable de la falta de cobertura muestral perfecta.
+En la práctica del trabajo de campo, las encuestas producen sesgos muestrales: ciertos perfiles de la población quedan sobre o subrepresentados respecto a su peso real en la población. Esos sesgos no son una falla del diseño sino una consecuencia inevitable de la falta de cobertura muestral perfecta.
 
 El raking (calibración iterativa por márgenes) corrige esos sesgos asignando un peso a cada caso de manera que la muestra ponderada replique la distribución real de la población según el Censo 2022. El sistema automatiza ese proceso para cualquier población de Argentina, adaptando los parámetros de calibración según la jurisdicción elegida.
 
