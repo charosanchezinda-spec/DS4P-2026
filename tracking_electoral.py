@@ -594,3 +594,14 @@ def tracking_semanal():
     plt.tight_layout()
     plt.show()
 
+    sample_df_total = df[vars_rake].copy().reset_index(drop=True)
+    sample_df_total.insert(0, '_id', range(len(sample_df_total)))
+    t_df_total = target_df.copy()
+    if '_id' not in t_df_total.columns:
+        t_df_total.insert(0, '_id', range(len(t_df_total)))
+    s_total = Sample.from_frame(sample_df_total, id_column='_id', outcome_columns=[])
+    t_total = Sample.from_frame(t_df_total, id_column='_id', outcome_columns=[])
+    adjusted_total = s_total.set_target(t_total).adjust(method='rake').trim(ratio=3)
+    print(adjusted_total.summary())
+    print(adjusted_total.weights().summary())
+    adjusted_total.covars().plot()
