@@ -437,7 +437,6 @@ def aplicar_rake_diario(grupo):
         grupo['peso_d'] = w / w.mean()
     return grupo
 
-
 def aplicar_rake_semanal(grupo):
     try:
         res = rake(
@@ -448,3 +447,98 @@ def aplicar_rake_semanal(grupo):
             variables      = vars_rake
         )
         pesos = res['weight'].values
+        promedio = np.mean(pesos)
+        grupo['peso_s'] = np.clip(pesos, promedio / 3, promedio * 3)
+        deff = 1 + (pesos.var() / pesos.mean()**2)
+        cv   = pesos.std() / pesos.mean() * 100
+        if deff > 2.5:
+            print("ADVERTENCIA ventana", grupo.name, ": Deff alto (", round(deff, 2), "). Considere ampliar la ventana.")
+        if cv > 80:
+            print("ADVERTENCIA ventana", grupo.name, ": CV alto (", round(cv, 1), "%). La muestra tiene perfiles muy subrepresentados.")
+    except ValueError as e:
+        print("No se pudo hacer raking en ventana", grupo.name, "(peso_s):", e)
+        w = grupo['peso_s'].fillna(1)
+        grupo['peso_s'] = w / w.mean()
+    return grupo
+
+def aplicar_rake_mensual(grupo):
+    try:
+        res = rake(
+            sample_df      = grupo[vars_rake],
+            sample_weights = grupo['peso_m'],
+            target_df      = target_df,
+            target_weights = target_weights,
+            variables      = vars_rake
+        )
+        pesos = res['weight'].values
+        promedio = np.mean(pesos)
+        grupo['peso_m'] = np.clip(pesos, promedio / 3, promedio * 3)
+        deff = 1 + (pesos.var() / pesos.mean()**2)
+        cv   = pesos.std() / pesos.mean() * 100
+        if deff > 2.5:
+            print("ADVERTENCIA ventana", grupo.name, ": Deff alto (", round(deff, 2), "). Considere ampliar la ventana.")
+        if cv > 80:
+            print("ADVERTENCIA ventana", grupo.name, ": CV alto (", round(cv, 1), "%). La muestra tiene perfiles muy subrepresentados.")
+    except ValueError as e:
+        print("No se pudo hacer raking en ventana", grupo.name, "(peso_m):", e)
+        w = grupo['peso_m'].fillna(1)
+        grupo['peso_m'] = w / w.mean()
+    return grupo
+
+df_rake_diario  = df.groupby('Ventana_D', group_keys=False).apply(aplicar_rake_diario)
+df_rake_semana  = df.groupby('Ventana_S', group_keys=False).apply(aplicar_rake_semanal)
+df_rake_mensual = df.groupby('Ventana_M', group_keys=False).apply(aplicar_rake_mensual)
+
+df['peso_d'] = df_rake_diario['peso_d']
+df['peso_s'] = df_rake_semana['peso_s']
+df['peso_m'] = df_rake_mensual['peso_m']
+
+def normalizar_pesos(df, peso_col, ventana_col):
+    df[peso_col] = df.groupby(ventana_col)[peso_col].transform(
+        lambda w: w / w.sum() * len(w)
+    )
+    return df
+
+df = normalizar_pesos(df, 'peso_d', 'Ventana_D')
+df = normalizar_pesos(df, 'peso_s', 'Ventana_S')
+df = normalizar_pesos(df, 'peso_m', 'Ventana_M')
+df
+
+# %%
+# Octavo Paso: TRACKING DIARIO
+def tracking_diario():
+    tracking_imagen_diario = (
+        df.groupby('Ventana_D')
+        .apply(lambda g: np.average(g['imagen_del_candidato'], weights=g['peso_d']))
+        .reset_index(name='trackeo')
+    )
+    print(tracking_imagen_diario.round(1))
+    plt.figure(figsize=(10, 5))
+    plt.plot(tracking_imagen_diario['Ventana_D'], tracking_imagen_diario['trackeo'], marker='o')
+    plt.xlabel('Ventana (diaria)', fontsize=10)
+    plt.ylabel('Imagen promedio', fontsize=10)
+    plt.title('Evolución de la imagen del candidato (ventana diaria)', fontsize=16)
+    plt.tight_layout()
+    plt.show()
+
+    candidatos = df['voto'].unique().tolist()
+    for c in candidatos:
+        df[f'vota_{c}'] = (df['voto'] == c).astype(int)
+    tracking_voto_diario = (
+        df.groupby('Ventana_D')
+        .apply(lambda g: pd.Series({
+            f"Vota_{c}": np.average(g[f'vota_{c}'], weights=g['peso_d']) * 100
+            for c in candidatos
+        }))
+        .reset_index()
+    )
+    print(tracking_voto_diario.round(1))
+    cols_voto = [col for col in tracking_voto_diario.columns if col.startswith('Vota_')]
+    tracking_voto_diario.set_index('Ventana_D')[cols_voto].plot(figsize=(10, 5))
+    plt.xlabel('Ventana (diaria)', fontsize=10)
+    plt.ylabel('Intención de voto (%)', fontsize=10)
+    plt.title('Tracking de intención de voto (ventana diaria)', fontsize=16)
+    plt.grid(alpha=0.3)
+    plt.legend(title="Candidato")
+    plt.tight_layout()
+    plt.show()
