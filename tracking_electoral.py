@@ -259,3 +259,41 @@ df['peso_d'] = 1
 df['peso_s'] = 1
 df['peso_m'] = 1
 
+POBLACIONES = {
+    # Regiones
+    "nacional":              "Total Argentina",
+    "gba":                   "Gran Buenos Aires (39 partidos)",
+    "interior_buenos_aires": "Provincia de Buenos Aires sin GBA",
+    "pampeana":              "Región Pampeana",
+    "noa":                   "Región NOA",
+    "nea":                   "Región NEA",
+    "cuyo":                  "Región Cuyo",
+    "patagonia":             "Región Patagonia",
+    # 24 provincias
+    "caba":                  "Ciudad Autónoma de Buenos Aires",
+    "buenos_aires":          "Provincia de Buenos Aires",
+    "catamarca":             "Catamarca",
+    "cordoba":               "Córdoba",
+    "corrientes":            "Corrientes",
+    "chaco":                 "Chaco",
+    "chubut":                "Chubut",
+    "entre_rios":            "Entre Ríos",
+    "formosa":               "Formosa",
+    "jujuy":                 "Jujuy",
+    "la_pampa":              "La Pampa",
+    "la_rioja":              "La Rioja",
+    "mendoza":               "Mendoza",
+    "misiones":              "Misiones",
+    "neuquen":               "Neuquén",
+    "rio_negro":             "Río Negro",
+    "salta":                 "Salta",
+    "san_juan":              "San Juan",
+    "san_luis":              "San Luis",
+    "santa_cruz":            "Santa Cruz",
+    "santa_fe":              "Santa Fe",
+    "santiago_estero":       "Santiago del Estero",
+    "tierra_del_fuego":      "Tierra del Fuego",
+    "tucuman":               "Tucumán",
+}
+
+
