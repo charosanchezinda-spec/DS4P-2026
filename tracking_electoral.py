@@ -126,16 +126,11 @@ df['edad_cat'] = pd.cut(
 )
 
 GBA_PARTIDOS = { # Recodificación GBA/interior - solo para encuestas de Buenos Aires.
-        "almirante brown", "avellaneda", "berazategui", "berisso", 
-        "brandsen", "campana", "cañuelas", "ensenada", "escobar", 
-        "esteban echeverría", "exaltación de la cruz", "ezeiza", 
-        "florencio varela", "general las heras", "general rodríguez", 
-        "general san martín", "lanús", "la plata", "lomas de zamora", "luján", 
-        "marcos paz", "malvinas argentinas", "merlo", "moreno", "morón", 
-        "pilar", "presidente perón", "quilmes", "san fernando", 
-        "san isidro", "san miguel", "san vicente", "tigre", 
-        "tres de febrero", "vicente lópez"
-        }
+    "almirante brown", "avellaneda", "berazategui", "berisso","brandsen", "campana", "cañuelas", "ensenada", "escobar", 
+    "esteban echeverría", "exaltación de la cruz", "ezeiza", "florencio varela", "general las heras", "general rodríguez", 
+    "general san martín", "lanús", "la plata", "lomas de zamora", "luján", "marcos paz", "malvinas argentinas", "merlo", "moreno", "morón", 
+    "pilar", "presidente perón", "quilmes", "san fernando", "san isidro", "san miguel", "san vicente", "tigre", "tres de febrero", "vicente lópez"
+}
 
 # %%
 # Quinto Paso: calcular los valores faltantes para las VD
@@ -256,8 +251,7 @@ df['peso_d'] = 1
 df['peso_s'] = 1
 df['peso_m'] = 1
 
-POBLACIONES = {
-    # Regiones
+POBLACIONES = { # Regiones
     "nacional":              "Total Argentina",
     "gba":                   "Gran Buenos Aires (39 partidos)",
     "interior_buenos_aires": "Provincia de Buenos Aires sin GBA",
@@ -674,7 +668,6 @@ elif tipo_track == "m":
 else:
     print("Opción inválida. Elegí D, S o M.")
 
-
 # %%
 # Decimosegundo paso: calcular los intervalos de confianza
 def weighted_std(values, weights):
@@ -764,15 +757,12 @@ img_ini = df.loc[df['Ventana_S'] == primera_ventana, 'imagen_del_candidato']
 img_fin = df.loc[df['Ventana_S'] == ultima_ventana,  'imagen_del_candidato']
 n_ini, n_fin = len(img_ini), len(img_fin)
 
-
 if n_ini == 0 or n_fin == 0:
     raise ValueError("Una de las ventanas no tiene datos de imagen.")
-
 
 H0    = "H0: La imagen del candidato no cambió significativamente"
 H1    = "H1: La imagen del candidato cambió significativamente"
 alpha = 0.05
-
 
 print("TEST DE HIPÓTESIS SOBRE CAMBIO EN LA IMAGEN")
 print("Ventana inicial:", primera_ventana, " | n =", n_ini)
@@ -781,7 +771,6 @@ print("Ventana final :", ultima_ventana,  " | n =", n_fin)
 normalidad       = (n_ini >= 30) and (n_fin >= 30)
 stat_lev, p_lev  = levene(img_ini, img_fin, center='mean')
 homocedasticidad = (p_lev >= alpha)
-
 
 print("Test de Levene — p-value:", p_lev)
 
@@ -800,5 +789,3 @@ if pval < alpha:
     print("Conclusión: Se RECHAZA H0")
 else:
     print("Conclusión: NO se rechaza H0")
-
-
