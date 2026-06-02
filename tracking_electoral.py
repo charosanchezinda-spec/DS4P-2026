@@ -401,3 +401,25 @@ if poblacion == "nacional": # Crear columna region solo si la encuesta es nacion
         'santa cruz':                        'Región Patagonia',
         'tierra del fuego':                  'Región Patagonia',
     })
+    
+respuesta_region = requests.get("http://localhost:8000/region-nacional", timeout=10)
+    targets["region"] = respuesta_region.json()["region"]
+    print("Columna region creada para calibración nacional.")
+
+for var in targets.keys():
+    df[var] = df[var].astype(str)
+
+target_df      = prepare_marginal_dist_for_raking(targets)
+target_weights = pd.Series(1.0, index=target_df.index, name="w_target")
+vars_rake      = list(targets.keys())
+
+def aplicar_rake_diario(grupo):
+    try:
+        res = rake(
+            sample_df      = grupo[vars_rake],
+            sample_weights = grupo['peso_d'],
+            target_df      = target_df,
+            target_weights = target_weights,
+            variables      = vars_rake
+        )
+        pesos = res['weight'].values
