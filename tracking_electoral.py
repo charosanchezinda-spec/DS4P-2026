@@ -344,3 +344,60 @@ def obtener_targets_desde_censo(poblacion):
         raise RuntimeError(
             "No se pudo conectar con la API."
         )
+        
+def elegir_targets():
+    print("Poblaciones disponibles:")
+    for clave in POBLACIONES:
+        print(clave)
+    while True:
+        poblacion = input("Escribí la población: ").strip().lower()
+        if poblacion in POBLACIONES:
+            break
+        print("Población no reconocida. Por favor elegí una de la lista.")
+    targets = obtener_targets_desde_censo(poblacion)
+    return targets, poblacion
+
+targets, poblacion = elegir_targets()
+# Verificar si la encuesta tiene municipios bonaerenses
+hay_municipios_bsas = False
+for estrato in df['estrato'].astype(str).str.lower().str.strip().unique():
+    if estrato in GBA_PARTIDOS:
+        hay_municipios_bsas = True
+        break
+if hay_municipios_bsas:
+    print("Municipios bonaerenses detectados en 'estrato'. Recodificando en GBA/interior...")
+    zonas = []
+    for estrato in df['estrato'].astype(str).str.lower().str.strip():
+        if estrato in GBA_PARTIDOS:
+            zonas.append("gba")
+        else:
+            zonas.append("interior")
+    df['estrato_bsas'] = zonas
+
+if poblacion == "nacional": # Crear columna region solo si la encuesta es nacional
+    df['region'] = df['estrato'].map({
+        'buenos aires':                      'Región Metropolitana',
+        'ciudad autónoma de buenos aires':   'Región Metropolitana',
+        'córdoba':                           'Región Pampeana',
+        'entre ríos':                        'Región Pampeana',
+        'la pampa':                          'Región Pampeana',
+        'santa fe':                          'Región Pampeana',
+        'catamarca':                         'Región NOA',
+        'jujuy':                             'Región NOA',
+        'la rioja':                          'Región NOA',
+        'salta':                             'Región NOA',
+        'santiago del estero':               'Región NOA',
+        'tucumán':                           'Región NOA',
+        'chaco':                             'Región NEA',
+        'corrientes':                        'Región NEA',
+        'formosa':                           'Región NEA',
+        'misiones':                          'Región NEA',
+        'mendoza':                           'Región Cuyo',
+        'san juan':                          'Región Cuyo',
+        'san luis':                          'Región Cuyo',
+        'chubut':                            'Región Patagonia',
+        'neuquén':                           'Región Patagonia',
+        'río negro':                         'Región Patagonia',
+        'santa cruz':                        'Región Patagonia',
+        'tierra del fuego':                  'Región Patagonia',
+    })
