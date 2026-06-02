@@ -105,7 +105,7 @@ El sistema ofrece tres ventanas: diaria, semanal y mensual. La ventana se elige 
 
 Los valores faltantes en las variables dependientes (voto, voto anterior, imagen) se imputan mediante modelos supervisados:
 
-**Voto y voto anterior:** regresión logística multinomial con predictores socioeconómicos (edad, sexo, estrato, nivel educativo).
+**Voto y voto anterior:** regresión logística multinomial con predictores socioeconómicos (edad, sexo, nivel educativo).
 
 **Imagen del candidato:** regresión lineal. Si el R² del modelo es menor a 0.15, se imputa por mediana.
 
