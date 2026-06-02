@@ -179,7 +179,7 @@ class CensoRepository:
     
     def obtener_region_nacional(self):
         return self._REGION_NACIONAL
-#%% API
+
 app = FastAPI(
     title="API Censo 2022 — Targets para Raking",
     description=(
@@ -201,8 +201,7 @@ def bienvenida():
         "endpoints": {
             "/poblaciones":      "Lista de poblaciones disponibles",
             "/targets/{nombre}": "Targets para una población",
-            "/estrato-bsas":       "Proporción GBA/interior para Buenos Aires",
-            "/docs":             "Documentación interactiva",
+            "/estrato-bsas":       "Proporción GBA/interior para Buenos Aires"
         }
     }
 
