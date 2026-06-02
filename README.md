@@ -140,4 +140,4 @@ Variables de calibración: sexo, grupo etario, nivel educativo y región (solo p
 
 ## Decisiones metodológicas
 
-Ver `decisiones_metodologicas.md`
+Ver [decisiones_metodologicas.md](decisiones_metodologicas.md)
