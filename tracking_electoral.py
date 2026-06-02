@@ -212,7 +212,6 @@ def imputar_categorica(df, variable_objetivo, variables_predictoras):
     df.loc[df[variable_objetivo].isna(), variable_objetivo] = preds
     return df
 
-
 def imputar_numerica(df, variable_objetivo, variables_predictoras):
     if r2_score(y_test_img, y_pred_img) > 0.15:
         print("El modelo de IMAGEN es suficientemente bueno: imputando con regresión lineal")
@@ -244,14 +243,12 @@ df['voto']          = df['voto'].astype(str).str.strip().str.lower()
 df['voto_anterior'] = df['voto_anterior'].astype(str).str.strip().str.lower()
 print("\nporcentaje de nans post imputación:", df.isna().mean() * 100)
 
-
 # %%
 # Sexto Paso: definir la ventana
 df = df.sort_values('fecha')
 df['Ventana_D'] = df['fecha']
 df['Ventana_S'] = df['fecha'].dt.to_period('W')
 df['Ventana_M'] = df['fecha'].dt.to_period('M')
-
 
 # %%
 # Séptimo Paso: ponderación con targets desde el Censo 2022
@@ -296,4 +293,54 @@ POBLACIONES = {
     "tucuman":               "Tucumán",
 }
 
-
+def obtener_targets_desde_censo(poblacion):
+    API_URL = f"http://localhost:8000/targets/{poblacion}"
+    print(f"  Consultando API — {POBLACIONES.get(poblacion, poblacion)}...")
+    try:
+        respuesta = requests.get(API_URL, timeout=10)
+        respuesta.raise_for_status()
+        targets = respuesta.json()["targets"]
+        if poblacion == "buenos_aires" and hay_municipios_bsas:
+            resp_estrato = requests.get(
+                "http://localhost:8000/estrato-bsas",
+                timeout=10
+            )
+            resp_estrato.raise_for_status()
+            targets["estrato_bsas"] = resp_estrato.json()["estrato"]
+            print("  Variable 'estrato_bsas' agregada (GBA/interior).")
+        elif poblacion == "nacional": # Crear columna region solo si la encuesta es nacional
+            df['region'] = df['estrato'].map({
+                'buenos aires':                      'Región Metropolitana',
+                'ciudad autónoma de buenos aires':   'Región Metropolitana',
+                'córdoba':                           'Región Pampeana',
+                'entre ríos':                        'Región Pampeana',
+                'la pampa':                          'Región Pampeana',
+                'santa fe':                          'Región Pampeana',
+                'catamarca':                         'Región NOA',
+                'jujuy':                             'Región NOA',
+                'la rioja':                          'Región NOA',
+                'salta':                             'Región NOA',
+                'santiago del estero':               'Región NOA',
+                'tucumán':                           'Región NOA',
+                'chaco':                             'Región NEA',
+                'corrientes':                        'Región NEA',
+                'formosa':                           'Región NEA',
+                'misiones':                          'Región NEA',
+                'mendoza':                           'Región Cuyo',
+                'san juan':                          'Región Cuyo',
+                'san luis':                          'Región Cuyo',
+                'chubut':                            'Región Patagonia',
+                'neuquén':                           'Región Patagonia',
+                'río negro':                         'Región Patagonia',
+                'santa cruz':                        'Región Patagonia',
+                'tierra del fuego':                  'Región Patagonia',
+            })
+            respuesta_region = requests.get("http://localhost:8000/region-nacional", timeout=10)
+            targets["region"] = respuesta_region.json()["region"]
+            print("Columna region creada para calibración nacional.")
+        print(f"  Variables de calibración: {list(targets.keys())}")
+        return targets
+    except requests.exceptions.ConnectionError:
+        raise RuntimeError(
+            "No se pudo conectar con la API."
+        )
