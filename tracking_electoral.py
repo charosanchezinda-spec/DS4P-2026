@@ -423,3 +423,28 @@ def aplicar_rake_diario(grupo):
             variables      = vars_rake
         )
         pesos = res['weight'].values
+        promedio = np.mean(pesos)
+        grupo['peso_d'] = np.clip(pesos, promedio / 3, promedio * 3)
+        deff = 1 + (pesos.var() / pesos.mean()**2)
+        cv   = pesos.std() / pesos.mean() * 100
+        if deff > 2.5:
+            print("ADVERTENCIA ventana", grupo.name, ": Deff alto (", round(deff, 2), "). Considere ampliar la ventana.")
+        if cv > 80:
+            print("ADVERTENCIA ventana", grupo.name, ": CV alto (", round(cv, 1), "%). La muestra tiene perfiles muy subrepresentados.")
+    except ValueError as e:
+        print("No se pudo hacer raking en ventana", grupo.name, "(peso_d):", e)
+        w = grupo['peso_d'].fillna(1)
+        grupo['peso_d'] = w / w.mean()
+    return grupo
+
+
+def aplicar_rake_semanal(grupo):
+    try:
+        res = rake(
+            sample_df      = grupo[vars_rake],
+            sample_weights = grupo['peso_s'],
+            target_df      = target_df,
+            target_weights = target_weights,
+            variables      = vars_rake
+        )
+        pesos = res['weight'].values
