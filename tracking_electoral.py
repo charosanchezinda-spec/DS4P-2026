@@ -551,6 +551,46 @@ def tracking_diario():
     s_total = Sample.from_frame (sample_df_total, id_column='_id'; outcome_columns=[])
     t_total = Sample.from_frame (t_df_total, id_column='_id', outcome_columns=[])
     s_total.set_target (t_total).adjust(method='rake').trim (ratio=3)
-        print (adjusted_total.summary())
-        print (adjusted_total.weights().summary())
-        adjusted_total.covars().plot()
+    print (adjusted_total.summary())
+    print (adjusted_total.weights().summary())
+    adjusted_total.covars().plot()
+
+# %%
+# Noveno paso: TRACKING SEMANAL
+def tracking_semanal():
+    tracking_imagen_semanal = (
+        df.groupby('Ventana_S')
+        .apply(lambda g: np.average(g['imagen_del_candidato'], weights=g['peso_s']))
+        .reset_index(name='trackeo')
+    )
+    print(tracking_imagen_semanal.round(1))
+    plt.figure(figsize=(10, 5))
+    tracking_imagen_semanal.set_index('Ventana_S')['trackeo'].plot(marker='o')
+    plt.xlabel('Ventana (semanal)', fontsize=10)
+    plt.ylabel('Imagen promedio', fontsize=10)
+    plt.title('Evolución de la imagen del candidato (ventana semanal)', fontsize=16)
+    plt.tight_layout()
+    plt.show()
+    
+    candidatos = df['voto'].unique().tolist()
+    for c in candidatos:
+        df[f'vota_{c}'] = (df['voto'] == c).astype(int)
+    tracking_voto_semanal = (
+        df.groupby('Ventana_S')
+        .apply(lambda g: pd.Series({
+            f"Vota_{c}": np.average(g[f'vota_{c}'], weights=g['peso_s']) * 100
+            for c in candidatos
+        }))
+        .reset_index()
+    )
+    print(tracking_voto_semanal.round(1))
+    cols_voto = [col for col in tracking_voto_semanal.columns if col.startswith('Vota_')]
+    tracking_voto_semanal.set_index('Ventana_S')[cols_voto].plot(figsize=(10, 5))
+    plt.xlabel('Ventana (semanal)', fontsize=10)
+    plt.ylabel('Intención de voto (%)', fontsize=10)
+    plt.title('Tracking de intención de voto (ventana semanal)', fontsize=16)
+    plt.grid(alpha=0.3)
+    plt.legend(title="Candidato")
+    plt.tight_layout()
+    plt.show()
+
