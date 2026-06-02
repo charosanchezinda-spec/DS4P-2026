@@ -605,3 +605,42 @@ def tracking_semanal():
     print(adjusted_total.summary())
     print(adjusted_total.weights().summary())
     adjusted_total.covars().plot()
+
+# %%
+# Décimo paso: TRACKING MENSUAL
+def tracking_mensual():
+    tracking_imagen_mensual = (
+        df.groupby('Ventana_M')
+        .apply(lambda g: np.average(g['imagen_del_candidato'], weights=g['peso_m']))
+        .reset_index(name='trackeo')
+    )
+    print(tracking_imagen_mensual.round(1))
+    plt.figure(figsize=(10, 5))
+    tracking_imagen_mensual.set_index('Ventana_M')['trackeo'].plot(marker='o')
+    plt.xlabel('Ventana (mensual)', fontsize=10)
+    plt.ylabel('Imagen promedio', fontsize=10)
+    plt.title('Evolución de la imagen del candidato (ventana mensual)', fontsize=16)
+    plt.tight_layout()
+    plt.show()
+
+    candidatos = df['voto'].unique().tolist()
+    for c in candidatos:
+        df[f'vota_{c}'] = (df['voto'] == c).astype(int)
+    tracking_voto_mensual = (
+        df.groupby('Ventana_M')
+        .apply(lambda g: pd.Series({
+            f"Vota_{c}": np.average(g[f'vota_{c}'], weights=g['peso_m']) * 100
+            for c in candidatos
+        }))
+        .reset_index()
+    )
+    print(tracking_voto_mensual.round(1))
+    cols_voto = [col for col in tracking_voto_mensual.columns if col.startswith('Vota_')]
+    tracking_voto_mensual.set_index('Ventana_M')[cols_voto].plot(figsize=(10, 5))
+    plt.xlabel('Ventana (mensual)', fontsize=10)
+    plt.ylabel('Intención de voto (%)', fontsize=10)
+    plt.title('Tracking de intención de voto (ventana mensual)', fontsize=16)
+    plt.grid(alpha=0.3)
+    plt.legend(title="Candidato")
+    plt.tight_layout()
+    plt.show()
