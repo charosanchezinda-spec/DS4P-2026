@@ -125,7 +125,6 @@ El sistema genera automáticamente:
 | `GET /targets/{poblacion}` | Targets para una población |
 | `GET /estrato-bsas` | Proporción GBA/interior para Buenos Aires |
 | `GET /region-nacional` | Proporciones de región para encuestas nacionales |
-| `GET /docs` | Documentación interactiva |
 
 ---
 
