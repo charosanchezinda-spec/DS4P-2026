@@ -5,7 +5,7 @@
 
 ## Descripción
 
-Sistema de calibración de encuestas electorales con parámetros del Censo Nacional 2022 (INDEC). Permite procesar encuestas continuas para cualquier población de Argentina, aplicar ponderación por raking, monitorear la calidad de los pesos y visualizar los resultados a través de una interfaz web interactiva.
+Sistema de calibración de encuestas electorales con parámetros del Censo Nacional 2022 (INDEC). Permite procesar encuestas para cualquier población de Argentina, aplicar ponderación por raking, monitorear la calidad de los pesos y visualizar los resultados a través de una interfaz web interactiva.
 
 El sistema resuelve un problema concreto del trabajo con encuestas electorales: cada vez que cambia la población objetivo, las variables de calibración o el tamaño de la ventana temporal, el procesamiento suele depender de ajustes manuales en el código. Este sistema automatiza ese proceso.
 
@@ -101,12 +101,12 @@ El sistema genera automáticamente:
 
 | Columna | Descripción |
 |---|---|
-| fecha | Fecha de la entrevista (YYYY-MM-DD) |
+| fecha | Fecha de la entrevista |
 | encuesta | ID único del caso |
 | estrato | Provincia o municipio del respondente |
 | sexo | femenino / masculino |
 | edad | Edad en años (mínimo 16) |
-| nivel_educativo | prim / sec / terc / univ / pos |
+| nivel_educativo | desde Sin Estudios hasta Posgrado |
 | cantidad_de_integrantes_en_el_hogar | Número entero |
 | imagen_del_candidato | Escala 0-100 (los ns/nc se imputan) |
 | voto | Nombre del candidato (los ns/nc se imputan) |
@@ -143,7 +143,6 @@ El sistema genera automáticamente:
 | `GET /targets/{poblacion}` | Targets para una población |
 | `GET /estrato-bsas` | Proporción GBA/interior para Buenos Aires |
 | `GET /region-nacional` | Proporciones de región para encuestas nacionales |
-| `GET /docs` | Documentación interactiva |
 
 ---
 
@@ -164,7 +163,7 @@ Para visualizar la base de datos: [SQLite Viewer](https://sqliteviewer.app)
 **INDEC — Censo Nacional de Población, Hogares y Viviendas 2022**
 https://www.indec.gob.ar/indec/web/Nivel4-Tema-2-41-165
 
-Variables de calibración: sexo, grupo etario, nivel educativo y región (solo para encuestas nacionales).
+Variables de calibración: sexo, grupo etario, nivel educativo y región (solo para encuestas nacionales y PBA).
 
 ---
 
