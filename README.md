@@ -1,8 +1,6 @@
 # Sistema de Ponderación Electoral
 **DS4P 2026 — Ciencia de Datos para Politólogos — UBA Sociales**
 
-***Alumnos: María José Pérez Morinigo, María Rosario Sofío, Charo Sanchez Inda y Gonzalo Murta***
-
 ---
 
 ## Descripción
@@ -16,16 +14,19 @@ El sistema resuelve un problema concreto del trabajo con encuestas electorales: 
 ## Arquitectura
 
 ```
+.env                  → variables de configuración
+main.py               → punto de entrada, corre el pipeline completo
 api_censo.py          → API FastAPI con patrón Repository
-                        Sirve parámetros del Censo 2022 por población
-                        Corre localmente con uvicorn
-
-tracking_electoral.py → Pipeline de análisis
-                        Limpieza, imputación, raking, evaluación
-                        Puede correr como script independiente
-
-app.py                → Frontend Streamlit
-                        Interfaz web para el usuario final
+app.py                → frontend Streamlit
+│
+├── carga.py          → carga y validación del archivo de encuesta
+├── limpieza.py       → limpieza y normalización de variables
+├── imputacion.py     → imputación de valores faltantes
+├── ventanas.py       → creación de ventanas temporales
+├── ponderacion.py    → raking, trimming y reporte de calibración
+├── tracking.py       → tracking de imagen e intención de voto
+├── estadistica.py    → intervalos de confianza y test de hipótesis
+└── base_datos.py     → historial de corridas con SQLAlchemy
 ```
 
 ---
@@ -33,7 +34,18 @@ app.py                → Frontend Streamlit
 ## Instalación
 
 ```bash
-pip install fastapi uvicorn streamlit pandas numpy scikit-learn scipy balance matplotlib plotly requests openpyxl
+pip install fastapi uvicorn streamlit pandas numpy scikit-learn scipy balance matplotlib plotly requests sqlalchemy python-dotenv openpyxl
+```
+
+---
+
+## Configuración
+
+Crear un archivo `.env` en la carpeta del proyecto:
+
+```
+API_URL=http://localhost:8000
+DB_PATH=tracking_electoral.db
 ```
 
 ---
@@ -44,7 +56,7 @@ El sistema necesita dos terminales abiertas al mismo tiempo.
 
 **Terminal 1 — API:**
 ```bash
-cd C:\ruta\al\proyecto
+cd ruta/al/proyecto
 python -m uvicorn api_censo:app --reload
 ```
 
@@ -52,11 +64,16 @@ Verificar que está corriendo en: `http://localhost:8000`
 
 **Terminal 2 — Frontend:**
 ```bash
-cd C:\ruta\al\proyecto
+cd ruta/al/proyecto
 streamlit run app.py
 ```
 
 La aplicación se abre automáticamente en: `http://localhost:8501`
+
+También se puede correr sin interfaz gráfica:
+```bash
+python main.py
+```
 
 ---
 
@@ -73,9 +90,10 @@ El sistema genera automáticamente:
 - Tracking de intención de voto por candidato
 - Reporte de calibración (ASMD, Deff, ESS)
 - Distribución muestra vs población por variable
-- Monitoreo de pesos (Deff, ESS, distribución)
+- Monitoreo de pesos
 - Intervalos de confianza al 95%
 - Test de hipótesis sobre cambio en la imagen
+- Registro automático en la base de datos
 
 ---
 
@@ -90,7 +108,7 @@ El sistema genera automáticamente:
 | edad | Edad en años (mínimo 16) |
 | nivel_educativo | prim / sec / terc / univ / pos |
 | cantidad_de_integrantes_en_el_hogar | Número entero |
-| imagen_del_candidato | Escala 0-100 |
+| imagen_del_candidato | Escala 0-100 (los ns/nc se imputan) |
 | voto | Nombre del candidato (los ns/nc se imputan) |
 | voto_anterior | Nombre del candidato o no_voto (los ns/nc se imputan) |
 
@@ -125,6 +143,19 @@ El sistema genera automáticamente:
 | `GET /targets/{poblacion}` | Targets para una población |
 | `GET /estrato-bsas` | Proporción GBA/interior para Buenos Aires |
 | `GET /region-nacional` | Proporciones de región para encuestas nacionales |
+| `GET /docs` | Documentación interactiva |
+
+---
+
+## Base de datos
+
+Cada corrida queda registrada automáticamente en `tracking_electoral.db` con dos tablas:
+
+**corridas** — fecha, población, cantidad de registros y variables de calibración usadas.
+
+**metricas** — Deff, ESS, ESSP, peso máximo y peso mínimo de cada corrida.
+
+Para visualizar la base de datos: [SQLite Viewer](https://sqliteviewer.app)
 
 ---
 
