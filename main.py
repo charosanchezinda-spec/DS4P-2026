@@ -1,7 +1,5 @@
-#%%
 from fastapi import FastAPI, HTTPException
 
-#%% repository
 class CensoRepository:
     _POBLACIONES = { #poblaciones disponibles
         # Regiones
