@@ -1,8 +1,19 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Header, Depends
+from schemas import CorrridaCreate
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+API_KEY = os.getenv("API_KEY")
+if not API_KEY:
+    raise RuntimeError("Falta la clave de seguridad API_KEY en el archivo .env")
+
+def verificar_api_key(x_api_key: str = Header(...)):
+    if x_api_key != API_KEY:
+        raise HTTPException(status_code=401, detail="No autorizado.")
 
 class CensoRepository:
-    _POBLACIONES = { #poblaciones disponibles
-        # Regiones
+    _POBLACIONES = {
         "nacional":              "Total Argentina",
         "gba":                   "Gran Buenos Aires (39 partidos)",
         "interior_buenos_aires": "Provincia de Buenos Aires sin GBA",
@@ -11,7 +22,6 @@ class CensoRepository:
         "nea":                   "Región NEA",
         "cuyo":                  "Región Cuyo",
         "patagonia":             "Región Patagonia",
-        # 24 provincias
         "caba":                  "Ciudad Autónoma de Buenos Aires",
         "buenos_aires":          "Provincia de Buenos Aires",
         "catamarca":             "Catamarca",
@@ -38,7 +48,7 @@ class CensoRepository:
         "tucuman":               "Tucumán",
     }
 
-    _SEXO = {  #sexo por regiones
+    _SEXO = {
         "nacional":              {"femenino": 0.519, "masculino": 0.481},
         "gba":                   {"femenino": 0.521, "masculino": 0.479},
         "interior_buenos_aires": {"femenino": 0.516, "masculino": 0.484},
@@ -73,13 +83,12 @@ class CensoRepository:
         "tucuman":               {"femenino": 0.514, "masculino": 0.486},
     }
 
-    _ESTRATO_BSAS = { #proporción al interior de bsas
-        "gba":      0.632,   
-        "interior": 0.368,   
+    _ESTRATO_BSAS = {
+        "gba":      0.632,
+        "interior": 0.368,
     }
 
-    
-    _EDAD = { # Proporción de población 18+ por grupo etario
+    _EDAD = {
         "nacional":              {"16-29": 0.202, "30-44": 0.284, "45-59": 0.237, "60+": 0.277},
         "gba":                   {"16-29": 0.218, "30-44": 0.293, "45-59": 0.232, "60+": 0.257},
         "interior_buenos_aires": {"16-29": 0.196, "30-44": 0.281, "45-59": 0.237, "60+": 0.286},
@@ -114,7 +123,7 @@ class CensoRepository:
         "tucuman":               {"16-29": 0.220, "30-44": 0.284, "45-59": 0.232, "60+": 0.264},
     }
 
-    _EDUCACION = { #propoción nivel educativo
+    _EDUCACION = {
         "nacional":              {"prim": 0.285, "sec": 0.430, "terc": 0.105, "univ": 0.158, "pos": 0.022},
         "gba":                   {"prim": 0.291, "sec": 0.441, "terc": 0.104, "univ": 0.141, "pos": 0.023},
         "interior_buenos_aires": {"prim": 0.258, "sec": 0.432, "terc": 0.111, "univ": 0.176, "pos": 0.023},
@@ -150,15 +159,14 @@ class CensoRepository:
     }
 
     _REGION_NACIONAL = {
-    "Región Metropolitana": 0.42,
-    "Región Pampeana":      0.23,
-    "Región NOA":           0.14,
-    "Región NEA":           0.08,
-    "Región Cuyo":          0.07,
-    "Región Patagonia":     0.06,
+        "Región Metropolitana": 0.42,
+        "Región Pampeana":      0.23,
+        "Región NOA":           0.14,
+        "Región NEA":           0.08,
+        "Región Cuyo":          0.07,
+        "Región Patagonia":     0.06,
     }
 
-#métodos que la API le pregunta al repo
     def obtener_poblaciones(self):
         return self._POBLACIONES
 
@@ -174,7 +182,7 @@ class CensoRepository:
             "edad_cat":        self._EDAD[poblacion],
             "nivel_educativo": self._EDUCACION[poblacion],
         }
-    
+
     def obtener_region_nacional(self):
         return self._REGION_NACIONAL
 
@@ -187,7 +195,7 @@ app = FastAPI(
     version="1.0",
 )
 
-repo = CensoRepository() # La API crea una instancia del Repository y siempre le pregunta a este objeto
+repo = CensoRepository()
 
 @app.get("/")
 def bienvenida():
@@ -199,7 +207,8 @@ def bienvenida():
         "endpoints": {
             "/poblaciones":      "Lista de poblaciones disponibles",
             "/targets/{nombre}": "Targets para una población",
-            "/estrato-bsas":       "Proporción GBA/interior para Buenos Aires"
+            "/estrato-bsas":     "Proporción GBA/interior para Buenos Aires",
+            "/region-nacional":  "Proporciones de región para encuestas nacionales",
         }
     }
 
@@ -207,7 +216,7 @@ def bienvenida():
 def listar_poblaciones():
     return {"poblaciones": repo.obtener_poblaciones()}
 
-@app.get("/estrato-bsas")
+@app.get("/estrato-bsas", dependencies=[Depends(verificar_api_key)])
 def obtener_estrato_bsas():
     return {
         "descripcion": "Proporción GBA vs interior bonaerense",
@@ -216,7 +225,7 @@ def obtener_estrato_bsas():
         "estrato":     repo.obtener_estrato_bsas(),
     }
 
-@app.get("/targets/{poblacion}")
+@app.get("/targets/{poblacion}", dependencies=[Depends(verificar_api_key)])
 def obtener_targets(poblacion: str):
     if not repo.poblacion_existe(poblacion):
         raise HTTPException(
@@ -234,6 +243,6 @@ def obtener_targets(poblacion: str):
         "targets":     repo.obtener_targets(poblacion),
     }
 
-@app.get("/region-nacional")
+@app.get("/region-nacional", dependencies=[Depends(verificar_api_key)])
 def obtener_region_nacional():
     return {"region": repo.obtener_region_nacional()}
