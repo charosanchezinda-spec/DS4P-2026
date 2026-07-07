@@ -5,13 +5,11 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv()
-DB_PATH = os.getenv("DB_PATH", "tracking_electoral.db")
-URL_BASE_DATOS = f"sqlite:///./{DB_PATH}"
+URL_BASE_DATOS = os.getenv("DATABASE_URL")
 
-engine = create_engine(URL_BASE_DATOS, connect_args={"check_same_thread": False})
+engine = create_engine(URL_BASE_DATOS)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
-
 
 class CorrridaDB(Base):
     __tablename__ = "corridas"
@@ -21,7 +19,6 @@ class CorrridaDB(Base):
     poblacion       = Column(String)
     n_registros     = Column(Integer)
     variables_calib = Column(Text)
-
 
 class MetricaDB(Base):
     __tablename__ = "metricas"
@@ -34,9 +31,7 @@ class MetricaDB(Base):
     peso_max   = Column(Float)
     peso_min   = Column(Float)
 
-
 Base.metadata.create_all(bind=engine)
-
 
 def get_db():
     db = SessionLocal()
@@ -44,7 +39,6 @@ def get_db():
         yield db
     finally:
         db.close()
-
 
 def registrar_corrida(db, poblacion, n_registros, variables_calib):
     corrida = CorrridaDB(
@@ -57,7 +51,6 @@ def registrar_corrida(db, poblacion, n_registros, variables_calib):
     db.commit()
     db.refresh(corrida)
     return corrida.id
-
 
 def registrar_metricas(db, corrida_id, deff, ess, essp, peso_max, peso_min):
     metrica = MetricaDB(
