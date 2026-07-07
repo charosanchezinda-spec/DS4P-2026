@@ -1,7 +1,6 @@
 import pandas as pd
 import os
 
-
 def cargar_datos(ruta):
     try:
         if not os.path.exists(ruta):
