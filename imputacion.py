@@ -24,7 +24,7 @@ def evaluar_modelos(df):
     X_train_va, X_test_va, y_train_va, y_test_va = train_test_split(
         X_va, y_va_num, test_size=0.3, random_state=42, stratify=y_va_num
     )
-    model_va_eval = LogisticRegression(multi_class='multinomial', solver='newton-cg', max_iter=2000)
+    model_va_eval = LogisticRegression(solver='newton-cg', max_iter=2000)
     model_va_eval.fit(X_train_va, y_train_va)
     y_pred_va = model_va_eval.predict(X_test_va)
     print("Accuracy:", accuracy_score(y_test_va, y_pred_va))
