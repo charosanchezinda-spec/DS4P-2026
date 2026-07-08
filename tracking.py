@@ -15,7 +15,6 @@ def tracking_diario():
     plt.tight_layout()
     plt.show()
 
-
     candidatos = df['voto'].unique().tolist()
     for c in candidatos:
         df[f'vota_{c}'] = (df['voto'] == c).astype(int)
@@ -38,7 +37,6 @@ def tracking_diario():
     plt.tight_layout()
     plt.show()
 
-
     sample_df_total = df[vars_rake].copy().reset_index(drop=True)
     sample_df_total.insert(0, '_id', range(len(sample_df_total)))
     t_df_total = target_df.copy()
@@ -50,8 +48,6 @@ def tracking_diario():
     print(adjusted_total.summary())
     print(adjusted_total.weights().summary())
     adjusted_total.covars().plot()
-   
-
 
 # %%
 # TRACKING SEMANAL
@@ -69,7 +65,6 @@ def tracking_semanal():
     plt.title('Evolución de la imagen del candidato (ventana semanal)', fontsize=16)
     plt.tight_layout()
     plt.show()
-
 
     candidatos = df['voto'].unique().tolist()
     for c in candidatos:
@@ -92,7 +87,6 @@ def tracking_semanal():
     plt.legend(title="Candidato")
     plt.tight_layout()
     plt.show()
-
 
     sample_df_total = df[vars_rake].copy().reset_index(drop=True)
     sample_df_total.insert(0, '_id', range(len(sample_df_total)))
@@ -123,7 +117,6 @@ def tracking_mensual():
     plt.tight_layout()
     plt.show()
 
-
     candidatos = df['voto'].unique().tolist()
     for c in candidatos:
         df[f'vota_{c}'] = (df['voto'] == c).astype(int)
@@ -146,7 +139,6 @@ def tracking_mensual():
     plt.tight_layout()
     plt.show()
 
-
     sample_df_total = df[vars_rake].copy().reset_index(drop=True)
     sample_df_total.insert(0, '_id', range(len(sample_df_total)))
     t_df_total = target_df.copy()
@@ -159,14 +151,9 @@ def tracking_mensual():
     print(adjusted_total.weights().summary())
     adjusted_total.covars().plot()
 
-
-
-
 # %%
 # Elegir el tipo de trackeo
 tipo_track = input("Elegí el tipo de tracking (D = diario, S = semanal, M = mensual): ").strip().lower()
-
-
 if tipo_track == "d":
     print("Generando TRACKING DIARIO...")
     tracking_diario()
@@ -178,4 +165,3 @@ elif tipo_track == "m":
     tracking_mensual()
 else:
     print("Opción inválida. Elegí D, S o M.")
-
