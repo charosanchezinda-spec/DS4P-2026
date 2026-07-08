@@ -45,7 +45,7 @@ def evaluar_modelos(df):
     X_train_v, X_test_v, y_train_v, y_test_v = train_test_split(
         X_v, y_v_num, test_size=0.3, random_state=42, stratify=y_v_num
     )
-    model_v_eval = LogisticRegression(multi_class='multinomial', solver='newton-cg', max_iter=2000)
+    model_v_eval = LogisticRegression(solver='newton-cg', max_iter=2000)
     model_v_eval.fit(X_train_v, y_train_v)
     y_pred_v = model_v_eval.predict(X_test_v)
     print("Accuracy:", accuracy_score(y_test_v, y_pred_v))
@@ -84,7 +84,7 @@ def imputar(df):
             return df
         X_full = pd.get_dummies(df_full[variables_predictoras], drop_first=True)
         y_full = df_full[variable_objetivo]
-        model  = LogisticRegression(multi_class='multinomial', solver='newton-cg', max_iter=2000)
+        model  = LogisticRegression(solver='newton-cg', max_iter=2000)
         model.fit(X_full, y_full)
         X_miss = pd.get_dummies(df_miss[variables_predictoras], drop_first=True)
         X_miss = X_miss.reindex(columns=X_full.columns, fill_value=0)
