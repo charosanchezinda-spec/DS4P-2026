@@ -1,7 +1,6 @@
 import pandas as pd
 import numpy as np
 
-
 GBA_PARTIDOS = {
     "almirante brown", "avellaneda", "berazategui", "berisso",
     "brandsen", "campana", "cañuelas", "ensenada", "escobar",
@@ -14,7 +13,6 @@ GBA_PARTIDOS = {
     "san isidro", "san miguel", "san vicente", "tigre",
     "tres de febrero", "vicente lópez"
 }
-
 
 def limpiar(df):
     df = df[~df[['voto', 'imagen_del_candidato']].isna().all(axis=1)]
@@ -37,7 +35,6 @@ def limpiar(df):
     print("Porcentaje de nans previo a la imputación:")
     print(df.isna().mean() * 100)
     return df
-
 
 def normalizar(df, poblacion):
     df['estrato'] = df['estrato'].astype(str).str.strip().str.lower()
