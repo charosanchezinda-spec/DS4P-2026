@@ -7,9 +7,12 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv()
-API_URL = os.getenv("API_URL", "http://localhost:8000")
+API_URL = os.getenv("API_URL")
 API_KEY = os.getenv("API_KEY")
-HEADERS = {"x-api-key": API_KEY}
+if not API_URL:
+    raise RuntimeError("Falta API_URL en el archivo .env")
+if not API_KEY:
+    raise RuntimeError("Falta API_KEY en el archivo .env")
 
 POBLACIONES = {
     "nacional":              "Total Argentina",
