@@ -62,6 +62,7 @@ def obtener_targets_desde_censo(poblacion, hay_municipios_bsas, df):
                 'tierra del fuego':                  'Región Patagonia',
             })
             respuesta_region = requests.get(f"{API_URL}/region-nacional", headers=HEADERS, timeout=10)
+            respuesta_region.raise_for_status()
             targets["region"] = respuesta_region.json()["region"]
             print("Columna region creada para calibración nacional.")
         print(f"  Variables de calibración: {list(targets.keys())}")
