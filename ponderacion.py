@@ -13,6 +13,7 @@ if not API_URL:
     raise RuntimeError("Falta API_URL en el archivo .env")
 if not API_KEY:
     raise RuntimeError("Falta API_KEY en el archivo .env")
+HEADERS = {"x-api-key": API_KEY}
 
 try:
     _resp = requests.get(f"{API_URL}/poblaciones", headers=HEADERS, timeout=60)
