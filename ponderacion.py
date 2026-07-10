@@ -14,40 +14,12 @@ if not API_URL:
 if not API_KEY:
     raise RuntimeError("Falta API_KEY en el archivo .env")
 
-POBLACIONES = {
-    "nacional":              "Total Argentina",
-    "gba":                   "Gran Buenos Aires (39 partidos)",
-    "interior_buenos_aires": "Provincia de Buenos Aires sin GBA",
-    "pampeana":              "Región Pampeana",
-    "noa":                   "Región NOA",
-    "nea":                   "Región NEA",
-    "cuyo":                  "Región Cuyo",
-    "patagonia":             "Región Patagonia",
-    "caba":                  "Ciudad Autónoma de Buenos Aires",
-    "buenos_aires":          "Provincia de Buenos Aires",
-    "catamarca":             "Catamarca",
-    "cordoba":               "Córdoba",
-    "corrientes":            "Corrientes",
-    "chaco":                 "Chaco",
-    "chubut":                "Chubut",
-    "entre_rios":            "Entre Ríos",
-    "formosa":               "Formosa",
-    "jujuy":                 "Jujuy",
-    "la_pampa":              "La Pampa",
-    "la_rioja":              "La Rioja",
-    "mendoza":               "Mendoza",
-    "misiones":              "Misiones",
-    "neuquen":               "Neuquén",
-    "rio_negro":             "Río Negro",
-    "salta":                 "Salta",
-    "san_juan":              "San Juan",
-    "san_luis":              "San Luis",
-    "santa_cruz":            "Santa Cruz",
-    "santa_fe":              "Santa Fe",
-    "santiago_estero":       "Santiago del Estero",
-    "tierra_del_fuego":      "Tierra del Fuego",
-    "tucuman":               "Tucumán",
-}
+try:
+    _resp = requests.get(f"{API_URL}/poblaciones", headers=HEADERS, timeout=60)
+    _resp.raise_for_status()
+    POBLACIONES = _resp.json()["poblaciones"]
+except Exception:
+    raise RuntimeError("No se pudo obtener el catálogo de poblaciones desde la API.")
 
 def obtener_targets_desde_censo(poblacion, hay_municipios_bsas, df):
     url = f"{API_URL}/targets/{poblacion}"
@@ -94,10 +66,7 @@ def obtener_targets_desde_censo(poblacion, hay_municipios_bsas, df):
         print(f"  Variables de calibración: {list(targets.keys())}")
         return targets, df
     except requests.exceptions.ConnectionError:
-        raise RuntimeError(
-            "No se pudo conectar con la API.\n"
-            "Verifique su conexión a internet."
-        )
+        raise RuntimeError("No se pudo conectar con la API.")
 
 def elegir_targets(hay_municipios_bsas, df):
     print("Poblaciones disponibles:")
