@@ -1,5 +1,4 @@
 from fastapi import FastAPI, HTTPException, Header, Depends
-from schemas import CorrridaCreate
 import os
 from dotenv import load_dotenv
 
