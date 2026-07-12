@@ -11,6 +11,15 @@ from dotenv import load_dotenv
 warnings.filterwarnings("ignore", category=FutureWarning)
 logging.getLogger("balance").setLevel(logging.ERROR)
 load_dotenv()
+try:
+    import streamlit as st
+    os.environ["API_URL"] = st.secrets["API_URL"]
+    os.environ["DATABASE_URL"] = st.secrets["DATABASE_URL"]
+    os.environ["API_KEY"] = st.secrets["API_KEY"]
+    os.environ["USUARIO"] = st.secrets["USUARIO"]
+    os.environ["CONTRASENA_HASH"] = st.secrets["CONTRASENA_HASH"]
+except Exception:
+    pass
 from balance import Sample
 from limpieza    import limpiar, normalizar, GBA_PARTIDOS
 from imputacion  import imputar
