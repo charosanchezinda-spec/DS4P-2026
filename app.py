@@ -8,6 +8,7 @@ import logging
 import os
 import bcrypt
 from dotenv import load_dotenv
+import requests
 warnings.filterwarnings("ignore", category=FutureWarning)
 logging.getLogger("balance").setLevel(logging.ERROR)
 load_dotenv()
