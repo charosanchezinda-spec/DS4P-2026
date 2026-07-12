@@ -63,7 +63,7 @@ st.sidebar.markdown(f"Usuario: **{os.getenv('USUARIO')}**")
 st.sidebar.divider()
 seccion = st.sidebar.radio(
     "Navegación",
-    options=["🏠 Inicio", "📂 Carga de encuesta", "📊 Dashboard analítico"]
+    options=["🏠 Inicio", "📂 Carga de encuesta", "📊 Dashboard analítico", "📋 Historial de corridas"]
 )
 st.sidebar.divider()
 if st.sidebar.button("Cerrar sesión"):
@@ -89,7 +89,33 @@ if seccion == "🏠 Inicio":
         st.info("**⚙️ Procesamiento automático**\n\nEl sistema limpia, imputa y pondera la encuesta automáticamente.")
     with col3:
         st.info("**📊 Dashboard analítico**\n\nVisualice los resultados del tracking y el reporte de calibración.")
-
+    st.divider()
+    st.subheader("🔮 Predicción de voto")
+    st.markdown("Ingrese un perfil sociodemográfico para predecir la intención de voto según el modelo entrenado.")
+ 
+    col_p1, col_p2, col_p3 = st.columns(3)
+    with col_p1:
+        edad = st.number_input("Edad", min_value=16, max_value=99, value=35)
+    with col_p2:
+        sexo = st.selectbox("Sexo", ["femenino", "masculino"])
+    with col_p3:
+        nivel_educativo = st.selectbox("Nivel educativo", ["prim", "sec", "terc", "univ", "pos"])
+ 
+    if st.button("Predecir"):
+        try:
+            resp = requests.get(
+                f"{os.getenv('API_URL')}/predecir",
+                headers={"x-api-key": os.getenv("API_KEY")},
+                params={"edad": edad, "sexo": sexo, "nivel_educativo": nivel_educativo},
+                timeout=60
+            )
+            resp.raise_for_status()
+            resultado = resp.json()
+            st.success(f"Predicción: **{resultado['prediccion']}**")
+            st.bar_chart(resultado["probabilidades"])
+            st.caption(resultado["nota"])
+        except Exception as e:
+            st.error(f"No se pudo obtener la predicción: {e}")
 # ==========================================
 # 4. SECCIÓN: CARGA DE ENCUESTA
 # ==========================================
@@ -173,13 +199,23 @@ elif seccion == "📂 Carga de encuesta":
         deff    = float(1 + (pesos_w.var() / pesos_w.mean()**2))
         ess     = float((pesos_w.sum()**2) / (pesos_w**2).sum())
         essp    = float(ess / len(pesos_w))
+
+        resp_corrida = requests.post(
+            f"{os.getenv('API_URL')}/corridas",
+            headers={"x-api-key": os.getenv("API_KEY")},
+            json={
+                "poblacion": poblacion,
+                "n_registros": len(df),
+                "variables_calib": ", ".join(vars_rake)
+            },
+            timeout=60
+        )
+        corrida_id = resp_corrida.json()["corrida_id"]
         db = next(get_db())
-        corrida_id = registrar_corrida(db, poblacion, len(df), vars_rake)
-        registrar_metricas(db, corrida_id, deff, ess, essp, float(pesos_w.max()), float(pesos_w.min()))
+        registrar_metricas(db, corrida_id, float(deff), float(ess), float(essp), float(pesos_w.max()), float(pesos_w.min()))
         db.close()
         st.success(f"Ponderación completada. Corrida registrada (id={corrida_id})")
         st.info("Vaya al **Dashboard analítico** en el menú lateral para ver los resultados.")
-
 # ==========================================
 # 5. SECCIÓN: DASHBOARD
 # ==========================================
@@ -189,11 +225,11 @@ elif seccion == "📊 Dashboard analítico":
     if 'procesado' not in st.session_state or not st.session_state.procesado:
         st.warning("No hay datos procesados todavía. Vaya a **Carga de encuesta** primero.")
         st.stop()
-    df         = st.session_state.df
-    targets    = st.session_state.targets
-    target_df  = st.session_state.target_df
-    vars_rake  = st.session_state.vars_rake
-    poblacion  = st.session_state.poblacion
+    df = st.session_state.df
+    targets = st.session_state.targets
+    target_df = st.session_state.target_df
+    vars_rake = st.session_state.vars_rake
+    poblacion = st.session_state.poblacion
     tipo_track = st.session_state.tipo_track
     if tipo_track == "d":
         peso_col    = 'peso_d'
@@ -313,3 +349,36 @@ elif seccion == "📊 Dashboard analítico":
         st.warning("Se RECHAZA H0: la imagen cambió significativamente.")
     else:
         st.info("NO se rechaza H0: no hay evidencia de cambio significativo.")
+# ==========================================
+# 6. SECCIÓN: HISTORIAL DE CORRIDAS
+# ========================================== 
+elif seccion == "📋 Historial de corridas":
+    st.title("📋 Historial de corridas")
+    st.divider()
+    db = next(get_db())
+    corridas = db.query(CorrridaDB).order_by(CorrridaDB.id.desc()).limit(20).all()
+    db.close()
+    if not corridas:
+        st.info("No hay corridas registradas todavía.")
+    else:
+        for corrida in corridas:
+            with st.expander(f"Corrida #{corrida.id} — {corrida.fecha_hora} — {corrida.poblacion}"):
+                col1, col2 = st.columns(2)
+                with col1:
+                    st.write("**Población:**", corrida.poblacion)
+                    st.write("**Registros:**", corrida.n_registros)
+                with col2:
+                    st.write("**Fecha:**", corrida.fecha_hora)
+                    st.write("**Variables:**", corrida.variables_calib)
+                db2 = next(get_db())
+                metrica = db2.query(MetricaDB).filter(MetricaDB.corrida_id == corrida.id).first()
+                db2.close()
+                if metrica:
+                    st.divider()
+                    col_m1, col_m2, col_m3 = st.columns(3)
+                    with col_m1:
+                        st.metric("Deff", round(metrica.deff, 3))
+                    with col_m2:
+                        st.metric("ESS", round(metrica.ess, 1))
+                    with col_m3:
+                        st.metric("ESSP", round(metrica.essp, 3))
