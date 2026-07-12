@@ -9,6 +9,7 @@ import os
 import bcrypt
 from dotenv import load_dotenv
 import requests
+from base_datos import registrar_metricas, get_db, CorrridaDB, MetricaDB
 warnings.filterwarnings("ignore", category=FutureWarning)
 logging.getLogger("balance").setLevel(logging.ERROR)
 load_dotenv()
