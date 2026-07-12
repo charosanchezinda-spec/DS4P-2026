@@ -300,7 +300,3 @@ def predecir(edad: int, sexo: str, nivel_educativo: str):
         "probabilidades": dict(zip(modelo_voto.classes_, probabilidades)),
         "nota": "Modelo demostrativo entrenado con datos ficticios. Puede reentrenarse con encuestas reales."
     }
-
-@app.get("/region-nacional", dependencies=[Depends(verificar_api_key)])
-def obtener_region_nacional():
-    return {"region": repo.obtener_region_nacional()}
