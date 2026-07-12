@@ -9,16 +9,12 @@ import os
 # ==========================================
 # ENTRENAMIENTO DEL MODELO PREDICTIVO
 # ==========================================
-# Este script entrena un modelo de clasificación para predecir
-# la intención de voto en base al perfil sociodemográfico.
-#
-# Es un modelo demostrativo entrenado con datos ficticios.
-# Puede reentrenarse con encuestas reales para mejorar su precisión.
-# La estrategia óptima de features depende de cada dataset.
+# Este script entrena un modelo de clasificación para predecir la intención de voto en base al perfil sociodemográfico.
+# Es un modelo demostrativo entrenado con datos ficticios.Puede reentrenarse con encuestas reales para mejorar su precisión.
 # ==========================================
 
 RUTA_ENCUESTA = "encuesta_ficticia_nacional_2.csv"
-RUTA_MODELO   = "modelo_voto.joblib"
+RUTA_MODELO = "modelo_voto.joblib"
 RUTA_FEATURES = "features_voto.joblib"
 
 if not os.path.exists(RUTA_ENCUESTA):
@@ -27,7 +23,7 @@ if not os.path.exists(RUTA_ENCUESTA):
 df = pd.read_csv(RUTA_ENCUESTA)
 df = df.dropna(subset=['voto'])
 df['nivel_educativo'] = df['nivel_educativo'].astype(str).str.strip().str.lower()
-df['sexo']            = df['sexo'].astype(str).str.strip().str.lower()
+df['sexo'] = df['sexo'].astype(str).str.strip().str.lower()
 
 features = ['edad', 'sexo', 'nivel_educativo']
 X = pd.get_dummies(df[features], drop_first=True)
