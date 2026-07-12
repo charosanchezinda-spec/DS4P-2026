@@ -42,10 +42,10 @@ def get_db():
 
 def registrar_corrida(db, poblacion, n_registros, variables_calib):
     corrida = CorrridaDB(
-        fecha_hora = datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        poblacion = poblacion,
-        n_registros = n_registros,
-        variables_calib = ", ".join(variables_calib)
+        fecha_hora  = datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        poblacion  = poblacion,
+        n_registros  = n_registros,
+        variables_calib = variables_calib
     )
     db.add(corrida)
     db.commit()
