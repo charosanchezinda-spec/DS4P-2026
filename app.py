@@ -20,7 +20,7 @@ try:
 except Exception:
     load_dotenv()
 from balance import Sample
-from limpieza    import limpiar, normalizar, GBA_PARTIDOS
+from limpieza    import limpiar, normalizar
 from imputacion  import imputar
 from ventanas    import crear_ventanas
 from ponderacion import obtener_targets_desde_censo, ponderar, POBLACIONES
