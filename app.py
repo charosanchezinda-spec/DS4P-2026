@@ -25,7 +25,7 @@ from imputacion  import imputar
 from ventanas    import crear_ventanas
 from ponderacion import obtener_targets_desde_censo, ponderar, POBLACIONES
 from estadistica import calcular_intervalos, test_hipotesis
-from base_datos import registrar_metricas, get_db, CorrridaDB, MetricaDB
+from base_datos import registrar_metricas, get_db, CorridaDB, MetricaDB
 
 # ==========================================
 # 0. LOGIN
@@ -329,7 +329,7 @@ elif seccion == "📋 Historial de corridas":
     st.title("📋 Historial de corridas")
     st.divider()
     db = next(get_db())
-    corridas = db.query(CorrridaDB).order_by(CorrridaDB.id.desc()).limit(20).all()
+    corridas = db.query(CorridaDB).order_by(CorridaDB.id.desc()).limit(20).all()
     db.close()
     if not corridas:
         st.info("No hay corridas registradas todavía.")
