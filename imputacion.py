@@ -89,7 +89,7 @@ def evaluar_modelos(df):
 def imputar(df):
     r2_img = evaluar_modelos(df)
 
-    def imputar_categorica(df, variable_objetivo, variables_predictoras):
+    def imputar_categorica(df, variable_objetivo, variables_predictoras, modelo_base=None, features_base=None):
         df_full = df[df[variable_objetivo].notna()]
         df_miss = df[df[variable_objetivo].isna()]
         if len(df_miss) == 0:
@@ -112,7 +112,7 @@ def imputar(df):
         df.loc[df[variable_objetivo].isna(), variable_objetivo] = preds
         return df
 
-    def imputar_numerica(df, variable_objetivo, variables_predictoras):
+    def imputar_numerica(df, variable_objetivo, variables_predictoras, modelo_base=None, features_base=None):
         if r2_img > 0.15:
             print("El modelo de IMAGEN es suficientemente bueno: imputando con regresión lineal")
             df_full = df[df[variable_objetivo].notna()]
