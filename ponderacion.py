@@ -83,6 +83,7 @@ def elegir_targets(hay_municipios_bsas, df):
     return targets, poblacion, df
 
 def ponderar(df, targets):
+    advertencias = []
     df['peso_d'] = 1
     df['peso_s'] = 1
     df['peso_m'] = 1
@@ -106,9 +107,9 @@ def ponderar(df, targets):
             deff = 1 + (pesos.var() / pesos.mean()**2)
             cv   = pesos.std() / pesos.mean() * 100
             if deff > 2.5:
-                print(f"ADVERTENCIA ventana {grupo.name}: Deff alto ({round(deff, 2)}). Considere ampliar la ventana.")
+                advertencias.append(f"ADVERTENCIA ventana {grupo.name}: Deff alto ({round(deff, 2)}). Considere ampliar la ventana.")
             if cv > 80:
-                print(f"ADVERTENCIA ventana {grupo.name}: CV alto ({round(cv, 1)}%). La muestra tiene perfiles muy subrepresentados.")
+                advertencias.append(f"ADVERTENCIA ventana {grupo.name}: CV alto ({round(cv, 1)}%). La muestra tiene perfiles muy subrepresentados.")
         except ValueError as e:
             print(f"No se pudo hacer raking en ventana {grupo.name} (peso_d):", e)
             w = grupo['peso_d'].fillna(1)
@@ -129,9 +130,9 @@ def ponderar(df, targets):
             deff = 1 + (pesos.var() / pesos.mean()**2)
             cv   = pesos.std() / pesos.mean() * 100
             if deff > 2.5:
-                print(f"ADVERTENCIA ventana {grupo.name}: Deff alto ({round(deff, 2)}). Considere ampliar la ventana.")
+                advertencias.append(f"ADVERTENCIA ventana {grupo.name}: Deff alto ({round(deff, 2)}). Considere ampliar la ventana.")
             if cv > 80:
-                print(f"ADVERTENCIA ventana {grupo.name}: CV alto ({round(cv, 1)}%). La muestra tiene perfiles muy subrepresentados.")
+                advertencias.append(f"ADVERTENCIA ventana {grupo.name}: CV alto ({round(cv, 1)}%). La muestra tiene perfiles muy subrepresentados.")
         except ValueError as e:
             print(f"No se pudo hacer raking en ventana {grupo.name} (peso_s):", e)
             w = grupo['peso_s'].fillna(1)
@@ -152,9 +153,9 @@ def ponderar(df, targets):
             deff = 1 + (pesos.var() / pesos.mean()**2)
             cv   = pesos.std() / pesos.mean() * 100
             if deff > 2.5:
-                print(f"ADVERTENCIA ventana {grupo.name}: Deff alto ({round(deff, 2)}). Considere ampliar la ventana.")
+                advertencias.append(f"ADVERTENCIA ventana {grupo.name}: Deff alto ({round(deff, 2)}). Considere ampliar la ventana.")
             if cv > 80:
-                print(f"ADVERTENCIA ventana {grupo.name}: CV alto ({round(cv, 1)}%). La muestra tiene perfiles muy subrepresentados.")
+                advertencias.append(f"ADVERTENCIA ventana {grupo.name}: CV alto ({round(cv, 1)}%). La muestra tiene perfiles muy subrepresentados.")
         except ValueError as e:
             print(f"No se pudo hacer raking en ventana {grupo.name} (peso_m):", e)
             w = grupo['peso_m'].fillna(1)
@@ -174,7 +175,7 @@ def ponderar(df, targets):
     df = normalizar_pesos(df, 'peso_d', 'Ventana_D')
     df = normalizar_pesos(df, 'peso_s', 'Ventana_S')
     df = normalizar_pesos(df, 'peso_m', 'Ventana_M')
-    return df, target_df, vars_rake
+    return df, target_df, vars_rake, advertencias
 
 def generar_reporte(df, target_df, vars_rake):
     sample_df_total = df[vars_rake].copy().reset_index(drop=True)
