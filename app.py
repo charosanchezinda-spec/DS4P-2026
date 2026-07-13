@@ -9,7 +9,6 @@ import os
 import bcrypt
 from dotenv import load_dotenv
 import requests
-from base_datos import registrar_metricas, get_db, CorrridaDB, MetricaDB
 warnings.filterwarnings("ignore", category=FutureWarning)
 logging.getLogger("balance").setLevel(logging.ERROR)
 load_dotenv()
@@ -27,7 +26,7 @@ from imputacion  import imputar
 from ventanas    import crear_ventanas
 from ponderacion import obtener_targets_desde_censo, ponderar, POBLACIONES
 from estadistica import calcular_intervalos, test_hipotesis
-from base_datos  import registrar_corrida, registrar_metricas, get_db
+from base_datos import registrar_metricas, get_db, CorrridaDB, MetricaDB
 
 # ==========================================
 # 0. LOGIN
