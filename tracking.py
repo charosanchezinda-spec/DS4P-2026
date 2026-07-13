@@ -1,4 +1,3 @@
-# %%
 # TRACKING DIARIO
 def tracking_diario():
     tracking_imagen_diario = (
@@ -49,7 +48,6 @@ def tracking_diario():
     print(adjusted_total.weights().summary())
     adjusted_total.covars().plot()
 
-# %%
 # TRACKING SEMANAL
 def tracking_semanal():
     tracking_imagen_semanal = (
@@ -100,7 +98,6 @@ def tracking_semanal():
     print(adjusted_total.weights().summary())
     adjusted_total.covars().plot()
 
-# %%
 # TRACKING MENSUAL
 def tracking_mensual():
     tracking_imagen_mensual = (
@@ -151,7 +148,6 @@ def tracking_mensual():
     print(adjusted_total.weights().summary())
     adjusted_total.covars().plot()
 
-# %%
 # Elegir el tipo de trackeo
 tipo_track = input("Elegí el tipo de tracking (D = diario, S = semanal, M = mensual): ").strip().lower()
 if tipo_track == "d":
