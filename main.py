@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException, Header, Depends
 from sqlalchemy.orm import Session
 from schemas import CorridaCreate
-from base_datos import get_db, CorridaDB, MetricaDB, registrar_corrida
+from base_datos import get_db, CorridaDB, registrar_corrida
 import joblib
 import pandas as pd
 import os
