@@ -202,16 +202,19 @@ repo = CensoRepository()
 # ==========================================
 # CARGA DEL MODELO PREDICTIVO
 # ========================================== 
-_ruta_modelo = os.path.join(os.path.dirname(__file__), "modelo_voto.joblib")
-_ruta_features = os.path.join(os.path.dirname(__file__), "features_voto.joblib")
-if os.path.exists(_ruta_modelo) and os.path.exists(_ruta_features):
-    modelo_voto   = joblib.load(_ruta_modelo)
-    features_voto = joblib.load(_ruta_features)
-    print("Modelo predictivo cargado correctamente.")
+def _cargar_modelo(nombre_modelo, nombre_features):
+    ruta_modelo = os.path.join(os.path.dirname(__file__), nombre_modelo)
+    ruta_features = os.path.join(os.path.dirname(__file__), nombre_features)
+    if os.path.exists(ruta_modelo) and os.path.exists(ruta_features):
+        return joblib.load(ruta_modelo), joblib.load(ruta_features)
+    return None, None
+modelo_voto_anterior, features_voto_anterior = _cargar_modelo("modelo_voto_anterior.joblib", "features_voto_anterior.joblib")
+modelo_voto, features_voto = _cargar_modelo("modelo_voto.joblib", "features_voto.joblib")
+modelo_imagen, features_imagen = _cargar_modelo("modelo_imagen.joblib", "features_imagen.joblib")
+if modelo_voto:
+    print("Modelos predictivos cargados correctamente.")
 else:
-    modelo_voto   = None
-    features_voto = None
-    print("Modelo predictivo no encontrado. Corra entrenar_modelo.py primero.")
+    print("Modelos no encontrados. Corra entrenar_modelo.py primero.")
 # ==========================================
 # ENDPOINTS
 # ==========================================
@@ -289,7 +292,7 @@ def predecir(edad: int, sexo: str, nivel_educativo: str):
     if modelo_voto is None:
         raise HTTPException(
             status_code=503,
-            detail="Modelo no disponible. Corra entrenar_modelo.py primero."
+            detail="Modelos no disponibles. Corra entrenar_modelo.py primero."
         )
     datos = pd.DataFrame([{"edad": edad, "sexo": sexo, "nivel_educativo": nivel_educativo}])
     X = pd.get_dummies(datos, drop_first=True).reindex(columns=features_voto, fill_value=0)
@@ -298,5 +301,10 @@ def predecir(edad: int, sexo: str, nivel_educativo: str):
     return {
         "prediccion": prediccion,
         "probabilidades": dict(zip(modelo_voto.classes_, probabilidades)),
-        "nota": "Modelo demostrativo entrenado con datos ficticios. Puede reentrenarse con encuestas reales."
+        "nota": "Modelo demostrativo entrenado con datos ficticios. Puede reentrenarse con encuestas reales.",
+        "modelos_disponibles": {
+            "voto_anterior": modelo_voto_anterior is not None,
+            "voto": modelo_voto is not None,
+            "imagen": modelo_imagen is not None,
+        }
     }
