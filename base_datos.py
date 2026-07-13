@@ -11,7 +11,7 @@ engine = create_engine(URL_BASE_DATOS)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
-class CorrridaDB(Base):
+class CorridaDB(Base):
     __tablename__ = "corridas"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -41,7 +41,7 @@ def get_db():
         db.close()
 
 def registrar_corrida(db, poblacion, n_registros, variables_calib):
-    corrida = CorrridaDB(
+    corrida = CorridaDB(
         fecha_hora  = datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         poblacion  = poblacion,
         n_registros  = n_registros,
