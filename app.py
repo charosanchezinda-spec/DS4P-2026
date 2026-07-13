@@ -150,7 +150,9 @@ elif seccion == "📂 Carga de encuesta":
             except RuntimeError as e:
                 st.error(str(e))
                 st.stop()
-            df, target_df, vars_rake = ponderar(df, targets)
+            df, target_df, vars_rake, advertencias = ponderar(df, targets)
+            for adv in advertencias:
+                st.warning(adv)
         # Guardar resultados en session_state para el Dashboard
         st.session_state.df = df
         st.session_state.targets = targets
