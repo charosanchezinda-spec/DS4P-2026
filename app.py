@@ -11,7 +11,6 @@ from dotenv import load_dotenv
 import requests
 warnings.filterwarnings("ignore", category=FutureWarning)
 logging.getLogger("balance").setLevel(logging.ERROR)
-load_dotenv()
 try:
     os.environ["API_URL"] = st.secrets["API_URL"]
     os.environ["DATABASE_URL"] = st.secrets["DATABASE_URL"]
@@ -19,7 +18,7 @@ try:
     os.environ["USUARIO"] = st.secrets["USUARIO"]
     os.environ["CONTRASENA_HASH"] = st.secrets["CONTRASENA_HASH"]
 except Exception:
-    pass
+    load_dotenv()
 from balance import Sample
 from limpieza    import limpiar, normalizar, GBA_PARTIDOS
 from imputacion  import imputar
