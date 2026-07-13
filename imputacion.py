@@ -22,7 +22,7 @@ def _cargar_modelo(nombre_modelo, nombre_features):
 _modelo_va, _features_va = _cargar_modelo("modelo_voto_anterior.joblib", "features_voto_anterior.joblib")
 _modelo_v, _features_v = _cargar_modelo("modelo_voto.joblib", "features_voto.joblib")
 _modelo_img, _features_img = _cargar_modelo("modelo_imagen.joblib", "features_imagen.joblib")
-print("Modelos pre-entrenados cargados)
+print("Modelos pre-entrenados cargados")
 
 def evaluar_modelos(df):
     print("Evaluación de modelos de regresión para imputación: logística y lineal\n")
