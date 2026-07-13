@@ -10,6 +10,19 @@ from sklearn.metrics import (
     mean_squared_error,
     r2_score
 )
+# ==========================================
+# CARGA DE MODELOS PRE-ENTRENADOS
+# ==========================================
+def _cargar_modelo(nombre_modelo, nombre_features):
+    ruta_modelo = os.path.join(os.path.dirname(__file__), nombre_modelo)
+    ruta_features = os.path.join(os.path.dirname(__file__), nombre_features)
+    if os.path.exists(ruta_modelo) and os.path.exists(ruta_features):
+        return joblib.load(ruta_modelo), joblib.load(ruta_features)
+    return None, None
+_modelo_va, _features_va = _cargar_modelo("modelo_voto_anterior.joblib", "features_voto_anterior.joblib")
+_modelo_v, _features_v = _cargar_modelo("modelo_voto.joblib", "features_voto.joblib")
+_modelo_img, _features_img = _cargar_modelo("modelo_imagen.joblib", "features_imagen.joblib")
+print("Modelos pre-entrenados cargados)
 
 def evaluar_modelos(df):
     print("Evaluación de modelos de regresión para imputación: logística y lineal\n")
@@ -68,10 +81,9 @@ def evaluar_modelos(df):
     model_img_eval.fit(X_train_img, y_train_img)
     y_pred_img = model_img_eval.predict(X_test_img)
     r2_img = r2_score(y_test_img, y_pred_img)
-    print("MAE:",  mean_absolute_error(y_test_img, y_pred_img))
+    print("MAE:", mean_absolute_error(y_test_img, y_pred_img))
     print("RMSE:", np.sqrt(mean_squared_error(y_test_img, y_pred_img)))
-    print("R²:",   r2_img)
-
+    print("R²:", r2_img)
     return r2_img
 
 def imputar(df):
@@ -84,10 +96,18 @@ def imputar(df):
             return df
         X_full = pd.get_dummies(df_full[variables_predictoras], drop_first=True)
         y_full = df_full[variable_objetivo]
-        model  = LogisticRegression(solver='newton-cg', max_iter=2000)
-        model.fit(X_full, y_full)
-        X_miss = pd.get_dummies(df_miss[variables_predictoras], drop_first=True)
-        X_miss = X_miss.reindex(columns=X_full.columns, fill_value=0)
+        if modelo_base is not None and features_base is not None:
+            print(f"Usando modelo pre-entrenado como base para imputar {variable_objetivo}.")
+            X_full_alineado = X_full.reindex(columns=features_base, fill_value=0)
+            model = LogisticRegression(solver='newton-cg', max_iter=2000)
+            model.fit(X_full_alineado, y_full)
+            X_miss = pd.get_dummies(df_miss[variables_predictoras], drop_first=True)
+            X_miss = X_miss.reindex(columns=features_base, fill_value=0)
+        else:
+            model = LogisticRegression(solver='newton-cg', max_iter=2000)
+            model.fit(X_full, y_full)
+            X_miss = pd.get_dummies(df_miss[variables_predictoras], drop_first=True)
+            X_miss = X_miss.reindex(columns=X_full.columns, fill_value=0)
         preds  = model.predict(X_miss)
         df.loc[df[variable_objetivo].isna(), variable_objetivo] = preds
         return df
@@ -101,10 +121,18 @@ def imputar(df):
                 return df
             X_full = pd.get_dummies(df_full[variables_predictoras], drop_first=True)
             y_full = df_full[variable_objetivo]
-            model  = LinearRegression()
-            model.fit(X_full, y_full)
-            X_miss = pd.get_dummies(df_miss[variables_predictoras], drop_first=True)
-            X_miss = X_miss.reindex(columns=X_full.columns, fill_value=0)
+            if modelo_base is not None and features_base is not None:
+                print(f"Usando modelo pre-entrenado como base para imputar {variable_objetivo}.")
+                X_full_alineado = X_full.reindex(columns=features_base, fill_value=0)
+                model = LinearRegression()
+                model.fit(X_full_alineado, y_full)
+                X_miss = pd.get_dummies(df_miss[variables_predictoras], drop_first=True)
+                X_miss = X_miss.reindex(columns=features_base, fill_value=0)
+            else:
+                model = LinearRegression()
+                model.fit(X_full, y_full)
+                X_miss = pd.get_dummies(df_miss[variables_predictoras], drop_first=True)
+                X_miss = X_miss.reindex(columns=X_full.columns, fill_value=0)
             preds  = model.predict(X_miss)
             df.loc[df[variable_objetivo].isna(), variable_objetivo] = preds
             return df
@@ -115,11 +143,11 @@ def imputar(df):
             )
             return df
 
-    df = imputar_categorica(df, 'voto_anterior', ['edad', 'sexo', 'estrato', 'nivel_educativo'])
-    df = imputar_categorica(df, 'voto', ['edad', 'sexo', 'estrato', 'nivel_educativo', 'voto_anterior'])
-    df = imputar_numerica(df, 'imagen_del_candidato', ['edad', 'sexo', 'estrato', 'nivel_educativo', 'voto', 'voto_anterior'])
+    df = imputar_categorica(df, 'voto_anterior', ['edad', 'sexo', 'estrato', 'nivel_educativo'], modelo_base=_modelo_va, features_base=_features_va)
+    df = imputar_categorica(df, 'voto', ['edad', 'sexo', 'estrato', 'nivel_educativo', 'voto_anterior'], modelo_base=_modelo_v, features_base=_features_v)
+    df = imputar_numerica(df, 'imagen_del_candidato', ['edad', 'sexo', 'estrato', 'nivel_educativo', 'voto', 'voto_anterior'], modelo_base=_modelo_img, features_base=_features_img)
     df['imagen_del_candidato'] = df['imagen_del_candidato'].clip(lower=0, upper=100)
-    df['voto']          = df['voto'].astype(str).str.strip().str.lower()
+    df['voto'] = df['voto'].astype(str).str.strip().str.lower()
     df['voto_anterior'] = df['voto_anterior'].astype(str).str.strip().str.lower()
     print("\nPorcentaje de nans post imputación:")
     print(df.isna().mean() * 100)
