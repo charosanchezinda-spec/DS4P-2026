@@ -91,33 +91,7 @@ if seccion == "🏠 Inicio":
         st.info("**⚙️ Procesamiento automático**\n\nEl sistema limpia, imputa y pondera la encuesta automáticamente.")
     with col3:
         st.info("**📊 Dashboard analítico**\n\nVisualice los resultados del tracking y el reporte de calibración.")
-    st.divider()
-    st.subheader("🔮 Predicción de voto")
-    st.markdown("Ingrese un perfil sociodemográfico para predecir la intención de voto según el modelo entrenado.")
- 
-    col_p1, col_p2, col_p3 = st.columns(3)
-    with col_p1:
-        edad = st.number_input("Edad", min_value=16, max_value=99, value=35)
-    with col_p2:
-        sexo = st.selectbox("Sexo", ["femenino", "masculino"])
-    with col_p3:
-        nivel_educativo = st.selectbox("Nivel educativo", ["prim", "sec", "terc", "univ", "pos"])
- 
-    if st.button("Predecir"):
-        try:
-            resp = requests.get(
-                f"{os.getenv('API_URL')}/predecir",
-                headers={"x-api-key": os.getenv("API_KEY")},
-                params={"edad": edad, "sexo": sexo, "nivel_educativo": nivel_educativo},
-                timeout=60
-            )
-            resp.raise_for_status()
-            resultado = resp.json()
-            st.success(f"Predicción: **{resultado['prediccion']}**")
-            st.bar_chart(resultado["probabilidades"])
-            st.caption(resultado["nota"])
-        except Exception as e:
-            st.error(f"No se pudo obtener la predicción: {e}")
+
 # ==========================================
 # 4. SECCIÓN: CARGA DE ENCUESTA
 # ==========================================
