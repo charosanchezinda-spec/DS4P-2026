@@ -14,7 +14,6 @@ warnings.filterwarnings("ignore", category=FutureWarning)
 logging.getLogger("balance").setLevel(logging.ERROR)
 load_dotenv()
 try:
-    import streamlit as st
     os.environ["API_URL"] = st.secrets["API_URL"]
     os.environ["DATABASE_URL"] = st.secrets["DATABASE_URL"]
     os.environ["API_KEY"] = st.secrets["API_KEY"]
