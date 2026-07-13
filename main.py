@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException, Header, Depends
 from sqlalchemy.orm import Session
-from schemas import CorrridaCreate
-from base_datos import get_db, CorrridaDB, MetricaDB, registrar_corrida
+from schemas import CorridaCreate
+from base_datos import get_db, CorridaDB, MetricaDB, registrar_corrida
 import joblib
 import pandas as pd
 import os
@@ -266,13 +266,13 @@ def obtener_region_nacional():
     return {"region": repo.obtener_region_nacional()}
 
 @app.post("/corridas", dependencies=[Depends(verificar_api_key)])
-def crear_corrida(corrida: CorrridaCreate, db: Session = Depends(get_db)):
+def crear_corrida(corrida: CorridaCreate, db: Session = Depends(get_db)):
     corrida_id = registrar_corrida(db, corrida.poblacion, corrida.n_registros, corrida.variables_calib)
     return {"corrida_id": corrida_id, "mensaje": "Corrida registrada correctamente."}
  
 @app.get("/corridas", dependencies=[Depends(verificar_api_key)])
 def listar_corridas(db: Session = Depends(get_db)):
-    corridas = db.query(CorrridaDB).order_by(CorrridaDB.id.desc()).all()
+    corridas = db.query(CorridaDB).order_by(CorridaDB.id.desc()).all()
     return {"total": len(corridas), "corridas": [
         {
             "id": c.id,
