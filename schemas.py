@@ -9,7 +9,7 @@ POBLACIONES_VALIDAS = {
     "santiago_estero", "tierra_del_fuego", "tucuman"
 }
 
-class CorrridaCreate(BaseModel):
+class CorridaCreate(BaseModel):
     poblacion:       str
     n_registros:     int
     variables_calib: str
