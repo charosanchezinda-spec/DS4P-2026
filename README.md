@@ -147,6 +147,7 @@ El sistema usa tres modelos entrenados con scikit-learn:
 - **`modelo_voto_anterior.joblib`** — regresión logística para imputar voto anterior
 - **`modelo_voto.joblib`** — regresión logística para imputar intención de voto
 - **`modelo_imagen.joblib`** — regresión lineal para imputar imagen del candidato
+
 Los modelos son demostrativos, entrenados con datos sintéticos, generados mediante Inteligencia Artificial.
  
 ---
