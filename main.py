@@ -222,12 +222,7 @@ def bienvenida():
         "version": "1.0",
         "patron": "Repository",
         "fuente": "INDEC — Censo Nacional 2022",
-        "endpoints": {
-            "/poblaciones": "Lista de poblaciones disponibles",
-            "/targets/{nombre}": "Targets para una población",
-            "/estrato-bsas": "Proporción GBA/interior para Buenos Aires",
-            "/region-nacional": "Proporciones de región para encuestas nacionales",
-        }
+        "documentacion": "/docs"
     }
 
 @app.get("/poblaciones")
