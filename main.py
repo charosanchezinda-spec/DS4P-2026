@@ -281,22 +281,23 @@ def listar_corridas(db: Session = Depends(get_db)):
 
 @app.get("/predecir", dependencies=[Depends(verificar_api_key)])
 def predecir(edad: int, sexo: str, nivel_educativo: str):
-    if modelo_voto is None:
+    if modelo_voto is None or modelo_voto_anterior is None or modelo_imagen is None:
         raise HTTPException(
             status_code=503,
             detail="Modelos no disponibles. Corra entrenar_modelo.py primero."
         )
     datos = pd.DataFrame([{"edad": edad, "sexo": sexo, "nivel_educativo": nivel_educativo}])
-    X = pd.get_dummies(datos, drop_first=True).reindex(columns=features_voto, fill_value=0)
-    prediccion = modelo_voto.predict(X)[0]
-    probabilidades = modelo_voto.predict_proba(X)[0].tolist()
+    X_voto = pd.get_dummies(datos, drop_first=True).reindex(columns=features_voto, fill_value=0)
+    prediccion_voto = modelo_voto.predict(X_voto)[0]
+    probabilidades_voto = dict(zip(modelo_voto.classes_, modelo_voto.predict_proba(X_voto)[0].tolist()))
+    X_va = pd.get_dummies(datos, drop_first=True).reindex(columns=features_voto_anterior, fill_value=0)
+    prediccion_voto_anterior = modelo_voto_anterior.predict(X_va)[0]
+    X_img = pd.get_dummies(datos, drop_first=True).reindex(columns=features_imagen, fill_value=0)
+    prediccion_imagen = round(float(modelo_imagen.predict(X_img)[0]), 1)
     return {
-        "prediccion": prediccion,
-        "probabilidades": dict(zip(modelo_voto.classes_, probabilidades)),
+        "prediccion_voto": prediccion_voto,
+        "probabilidades_voto": probabilidades_voto,
+        "prediccion_voto_anterior": prediccion_voto_anterior,
+        "prediccion_imagen": prediccion_imagen,
         "nota": "Modelo demostrativo entrenado con datos sintéticos. Puede reentrenarse con encuestas reales.",
-        "modelos_disponibles": {
-            "voto_anterior": modelo_voto_anterior is not None,
-            "voto": modelo_voto is not None,
-            "imagen": modelo_imagen is not None,
-        }
     }
