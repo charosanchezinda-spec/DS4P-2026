@@ -293,7 +293,7 @@ def predecir(edad: int, sexo: str, nivel_educativo: str):
     return {
         "prediccion": prediccion,
         "probabilidades": dict(zip(modelo_voto.classes_, probabilidades)),
-        "nota": "Modelo demostrativo entrenado con datos ficticios. Puede reentrenarse con encuestas reales.",
+        "nota": "Modelo demostrativo entrenado con datos sintéticos. Puede reentrenarse con encuestas reales.",
         "modelos_disponibles": {
             "voto_anterior": modelo_voto_anterior is not None,
             "voto": modelo_voto is not None,
