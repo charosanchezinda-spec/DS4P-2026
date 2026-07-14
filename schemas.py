@@ -1,4 +1,4 @@
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, field_validator, PositiveInt
 
 POBLACIONES_VALIDAS = {
     "nacional", "gba", "interior_buenos_aires", "pampeana", "noa", "nea",
@@ -10,8 +10,8 @@ POBLACIONES_VALIDAS = {
 }
 
 class CorridaCreate(BaseModel):
-    poblacion:       str
-    n_registros:     int
+    poblacion: str
+    n_registros: PositiveInt
     variables_calib: str
     @field_validator('poblacion')
     def poblacion_valida(cls, v):
