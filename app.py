@@ -330,30 +330,33 @@ elif seccion == "📊 Dashboard analítico":
 elif seccion == "📋 Historial de corridas":
     st.title("📋 Historial de corridas")
     st.divider()
-    db = next(get_db())
-    corridas = db.query(CorridaDB).order_by(CorridaDB.id.desc()).limit(20).all()
-    db.close()
-    if not corridas:
-        st.info("No hay corridas registradas todavía.")
-    else:
-        for corrida in corridas:
-            with st.expander(f"Corrida #{corrida.id} — {corrida.fecha_hora} — {corrida.poblacion}"):
-                col1, col2 = st.columns(2)
-                with col1:
-                    st.write("**Población:**", corrida.poblacion)
-                    st.write("**Registros:**", corrida.n_registros)
-                with col2:
-                    st.write("**Fecha:**", corrida.fecha_hora)
-                    st.write("**Variables:**", corrida.variables_calib)
-                db2 = next(get_db())
-                metrica = db2.query(MetricaDB).filter(MetricaDB.corrida_id == corrida.id).first()
-                db2.close()
-                if metrica:
-                    st.divider()
-                    col_m1, col_m2, col_m3 = st.columns(3)
-                    with col_m1:
-                        st.metric("Deff", round(metrica.deff, 3))
-                    with col_m2:
-                        st.metric("ESS", round(metrica.ess, 1))
-                    with col_m3:
-                        st.metric("ESSP", round(metrica.essp, 3))
+    try:
+        db = next(get_db())
+        corridas = db.query(CorridaDB).order_by(CorridaDB.id.desc()).limit(20).all()
+        db.close()
+        if not corridas:
+            st.info("No hay corridas registradas todavía.")
+        else:
+            for corrida in corridas:
+                with st.expander(f"Corrida #{corrida.id} — {corrida.fecha_hora} — {corrida.poblacion}"):
+                    col1, col2 = st.columns(2)
+                    with col1:
+                        st.write("**Población:**", corrida.poblacion)
+                        st.write("**Registros:**", corrida.n_registros)
+                    with col2:
+                        st.write("**Fecha:**", corrida.fecha_hora)
+                        st.write("**Variables:**", corrida.variables_calib)
+                    db2 = next(get_db())
+                    metrica = db2.query(MetricaDB).filter(MetricaDB.corrida_id == corrida.id).first()
+                    db2.close()
+                    if metrica:
+                        st.divider()
+                        col_m1, col_m2, col_m3 = st.columns(3)
+                        with col_m1:
+                            st.metric("Deff", round(metrica.deff, 3))
+                        with col_m2:
+                            st.metric("ESS", round(metrica.ess, 1))
+                        with col_m3:
+                            st.metric("ESSP", round(metrica.essp, 3))
+    except Exception as e:
+        st.info("Procese una encuesta primero para ver el historial.")
