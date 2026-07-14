@@ -41,7 +41,7 @@ Pipeline (carga, limpieza, imputacion, ventanas, ponderacion, tracking, estadist
 app.py  →  frontend Streamlit
 ```
 
-Si en el futuro cambia la fuente de datos, solo se modifica el Repository. La API y el tracking no se tocan.
+Si en el futuro cambia la fuente de datos, solo se modifica el Repository. La API y el pipeline no se tocan.
 
 ---
 
