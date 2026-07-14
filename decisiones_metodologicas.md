@@ -19,7 +19,7 @@ Se calibra por tres variables base: sexo, grupo etario y nivel educativo. Para e
 
 **Disponibilidad.** El Censo 2022 publica estas variables para todas las jurisdicciones del país, lo que permite calibrar contra datos reales y no contra estimaciones.
 
-**Relevancia electoral.** Las tres variables tienen relación documentada con el comportamiento electoral en Argentina. El voto varía sistemáticamente por edad, nivel educativo y región.
+**Relevancia electoral.** Las tres variables tienen relación documentada con el comportamiento electoral en Argentina. El voto varía sistemáticamente por edad, nivel educativo y sexo.
 
 **Estabilidad del raking.** Incorporar más variables aumenta el riesgo de no convergencia, especialmente en ventanas con pocos casos. Tres o cuatro variables es el estándar en la práctica de encuestas electorales argentinas.
 
