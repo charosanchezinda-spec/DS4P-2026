@@ -34,9 +34,11 @@ La API implementa el patrón de diseño Repository. La clase `CensoRepository` e
 ```
 CensoRepository  →  datos del Censo 2022 (diccionarios)
        ↓
-API  →  recibe consultas y devuelve respuestas
+API (main.py)  →  recibe consultas y devuelve respuestas
        ↓
-tracking_electoral.py  →  consume la API y procesa la encuesta
+Pipeline (carga, limpieza, imputacion, ventanas, ponderacion, tracking, estadistica)
+       ↓
+app.py  →  frontend Streamlit
 ```
 
 Si en el futuro cambia la fuente de datos, solo se modifica el Repository. La API y el tracking no se tocan.
