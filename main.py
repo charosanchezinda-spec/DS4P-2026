@@ -211,10 +211,7 @@ def _cargar_modelo(nombre_modelo, nombre_features):
 modelo_voto_anterior, features_voto_anterior = _cargar_modelo("modelo_voto_anterior.joblib", "features_voto_anterior.joblib")
 modelo_voto, features_voto = _cargar_modelo("modelo_voto.joblib", "features_voto.joblib")
 modelo_imagen, features_imagen = _cargar_modelo("modelo_imagen.joblib", "features_imagen.joblib")
-if modelo_voto:
-    print("Modelos predictivos cargados correctamente.")
-else:
-    print("Modelos no encontrados. Corra entrenar_modelo.py primero.")
+
 # ==========================================
 # ENDPOINTS
 # ==========================================
