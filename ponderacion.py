@@ -16,7 +16,7 @@ if not API_KEY:
 HEADERS = {"x-api-key": API_KEY}
 
 try:
-    _resp = requests.get(f"{API_URL}/poblaciones", headers=HEADERS, timeout=60)
+    _resp = requests.get(f"{API_URL}/poblaciones", timeout=60)
     _resp.raise_for_status()
     POBLACIONES = _resp.json()["poblaciones"]
 except Exception:
