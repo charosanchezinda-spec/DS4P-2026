@@ -265,7 +265,7 @@ def imputar(df):
     global _modelo_va, _features_va, _datos_va
     global _modelo_v, _features_v, _datos_v
     global _modelo_img, _features_img, _datos_img
-    df_observado = df.copy(deep=True).
+    df_observado = df.copy(deep=True)
     encuesta_id = _generar_id_encuesta(df_observado)
     r2_img = evaluar_modelos(df_observado)
     # ------------------------------------------
