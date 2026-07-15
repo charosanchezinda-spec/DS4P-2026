@@ -99,7 +99,7 @@ def ponderar(df, targets):
             if cv > 80:
                 advertencias.append(f"ADVERTENCIA ventana {grupo.name}: CV alto ({round(cv, 1)}%). La muestra tiene perfiles muy subrepresentados.")
         except ValueError as e:
-            print(f"No se pudo hacer raking en ventana {grupo.name} (peso_d):", e)
+            advertencias.append(f"No se pudo hacer raking en ventana {grupo.name}: {e}")
             w = grupo['peso_d'].fillna(1)
             grupo['peso_d'] = w / w.mean()
         return grupo
@@ -122,7 +122,7 @@ def ponderar(df, targets):
             if cv > 80:
                 advertencias.append(f"ADVERTENCIA ventana {grupo.name}: CV alto ({round(cv, 1)}%). La muestra tiene perfiles muy subrepresentados.")
         except ValueError as e:
-            print(f"No se pudo hacer raking en ventana {grupo.name} (peso_s):", e)
+            advertencias.append(f"No se pudo hacer raking en ventana {grupo.name}: {e}")
             w = grupo['peso_s'].fillna(1)
             grupo['peso_s'] = w / w.mean()
         return grupo
@@ -145,7 +145,7 @@ def ponderar(df, targets):
             if cv > 80:
                 advertencias.append(f"ADVERTENCIA ventana {grupo.name}: CV alto ({round(cv, 1)}%). La muestra tiene perfiles muy subrepresentados.")
         except ValueError as e:
-            print(f"No se pudo hacer raking en ventana {grupo.name} (peso_m):", e)
+            advertencias.append(f"No se pudo hacer raking en ventana {grupo.name}: {e}")
             w = grupo['peso_m'].fillna(1)
             grupo['peso_m'] = w / w.mean()
         return grupo
