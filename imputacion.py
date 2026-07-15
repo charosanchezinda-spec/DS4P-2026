@@ -43,11 +43,8 @@ _datos_img = _cargar("datos_imagen.joblib")
 def _generar_id_encuesta(df):
     df_hash = df.copy()
     df_hash = df_hash.reindex(sorted(df_hash.columns), axis=1)
-    hashes_filas = pd.util.hash_pandas_object(
-        df_hash,
-        index=False
-    ).to_numpy()
-    hashes_filas.sort()
+    hashes_filas = pd.util.hash_pandas_object(df_hash,index=False).to_numpy()
+    hashes_filas = np.sort(hashes_filas)
     return hashlib.sha256(hashes_filas.tobytes()).hexdigest()
 
 # ==========================================
