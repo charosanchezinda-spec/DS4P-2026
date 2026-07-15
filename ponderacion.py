@@ -70,18 +70,6 @@ def obtener_targets_desde_censo(poblacion, hay_municipios_bsas, df):
     except requests.exceptions.ConnectionError:
         raise RuntimeError("No se pudo conectar con la API.")
 
-def elegir_targets(hay_municipios_bsas, df):
-    print("Poblaciones disponibles:")
-    for clave in POBLACIONES:
-        print(clave)
-    while True:
-        poblacion = input("Escribí la población: ").strip().lower()
-        if poblacion in POBLACIONES:
-            break
-        print("Población no reconocida. Por favor elegí una de la lista.")
-    targets, df = obtener_targets_desde_censo(poblacion, hay_municipios_bsas, df)
-    return targets, poblacion, df
-
 def ponderar(df, targets):
     advertencias = []
     df['peso_d'] = 1
