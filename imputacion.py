@@ -358,7 +358,7 @@ def imputar(df):
     print("\nPorcentaje de valores faltantes post imputación:")
     print(df.isna().mean() * 100)
     print("\nLos modelos fueron actualizados en disco. Para que el endpoint /predecir use estas versiones, reinicie la API FastAPI.")
-    return dfer()
+    return df
     print("\nPorcentaje de nans post imputación:")
     print(df.isna().mean() * 100)
     return df
