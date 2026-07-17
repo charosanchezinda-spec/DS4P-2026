@@ -98,12 +98,10 @@ def test_hipotesis(df):
         tstat, pval = ttest_ind(img_ini, img_fin, equal_var=False)
     else:
         tstat, pval = mannwhitneyu(img_ini, img_fin, alternative='two-sided')
-
     print("Estadístico:", tstat)
     print("p-value:", pval)
     if pval < alpha:
         print("Conclusión: Se RECHAZA H0")
     else:
         print("Conclusión: NO se rechaza H0")
-
-    return tstat, pval
+   return tstat, pval, pval < alpha
