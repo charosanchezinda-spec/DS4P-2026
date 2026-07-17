@@ -23,7 +23,7 @@ from balance import Sample
 from limpieza    import limpiar, normalizar
 from imputacion  import imputar
 from ventanas    import crear_ventanas
-from ponderacion import obtener_targets_desde_censo, ponderar, POBLACIONES
+from ponderacion import obtener_targets_desde_censo, ponderar, POBLACIONES, generar_reporte
 from estadistica import calcular_intervalos, test_hipotesis
 from base_datos import registrar_metricas, get_db, CorridaDB, MetricaDB
 
@@ -272,14 +272,7 @@ elif seccion == "📊 Dashboard analítico":
     st.divider()
     # Reporte de calibración
     st.subheader("📊 Reporte de calibración")
-    sample_df_total = df[vars_rake].copy().reset_index(drop=True)
-    sample_df_total.insert(0, '_id', range(len(sample_df_total)))
-    t_df_total = target_df.copy()
-    if '_id' not in t_df_total.columns:
-        t_df_total.insert(0, '_id', range(len(t_df_total)))
-    s_total = Sample.from_frame(sample_df_total, id_column='_id', outcome_columns=[])
-    t_total = Sample.from_frame(t_df_total,      id_column='_id', outcome_columns=[])
-    adjusted_total = s_total.set_target(t_total).adjust(method='rake').trim(ratio=3)
+    adjusted_total = generar_reporte(df, target_df, vars_rake)
     tab1, tab2, tab3 = st.tabs(["Resumen", "Muestra vs Población", "Monitoreo de pesos"])
     with tab1:
         st.text(str(adjusted_total.summary()))
