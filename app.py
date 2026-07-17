@@ -153,9 +153,9 @@ elif seccion == "📂 Carga de encuesta":
         # Registrar en base de datos
         adjusted_total = generar_reporte(df, target_df, vars_rake)
         pesos_w = adjusted_total.weights().df['weight']
-        deff    = float(1 + (pesos_w.var() / pesos_w.mean()**2))
-        ess     = float((pesos_w.sum()**2) / (pesos_w**2).sum())
-        essp    = float(ess / len(pesos_w))
+        deff = float(1 + (pesos_w.var() / pesos_w.mean()**2))
+        ess = float((pesos_w.sum()**2) / (pesos_w**2).sum())
+        essp = float(ess / len(pesos_w))
 
         resp_corrida = requests.post(
             f"{os.getenv('API_URL')}/corridas",
