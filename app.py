@@ -20,9 +20,10 @@ try:
 except Exception:
     load_dotenv()
 from balance import Sample
-from limpieza    import limpiar, normalizar
-from imputacion  import imputar
-from ventanas    import crear_ventanas
+from carga import cargar_datos
+from limpieza import limpiar, normalizar
+from imputacion import imputar
+from ventanas import crear_ventanas
 from ponderacion import obtener_targets_desde_censo, ponderar, POBLACIONES, generar_reporte
 from estadistica import calcular_intervalos, test_hipotesis
 from base_datos import registrar_metricas, get_db, CorridaDB, MetricaDB
@@ -118,22 +119,10 @@ elif seccion == "📂 Carga de encuesta":
             st.error("Por favor cargue un archivo de encuesta.")
             st.stop()
         with st.spinner("Cargando datos..."):
-            if archivo.name.endswith(".csv"):
-                df = pd.read_csv(archivo, encoding="utf-8")
-            else:
-                df = pd.read_excel(archivo)
-            df.columns = df.columns.str.strip().str.lower().str.replace(" ", "_")
-            columnas_requeridas = [
-                "fecha", "encuesta", "estrato", "sexo", "edad",
-                "nivel_educativo", "cantidad_de_integrantes_en_el_hogar",
-                "imagen_del_candidato", "voto", "voto_anterior"
-            ]
-            faltantes = [col for col in columnas_requeridas if col not in df.columns]
-            if faltantes:
-                st.error(f"Faltan columnas: {faltantes}")
+            df, error = cargar_datos(archivo)
+            if error:
+                st.error(error)
                 st.stop()
-            df['fecha'] = pd.to_datetime(df['fecha'])
-            df = df.rename(columns={"cantidad_de_integrantes_en_el_hogar": "integrantes_hogar"})
             st.success(f"Archivo cargado: {len(df)} registros")
         with st.spinner("Limpiando y normalizando..."):
             df = limpiar(df)
