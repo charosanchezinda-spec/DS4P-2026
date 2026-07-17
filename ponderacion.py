@@ -172,9 +172,6 @@ def generar_reporte(df, target_df, vars_rake):
     if '_id' not in t_df_total.columns:
         t_df_total.insert(0, '_id', range(len(t_df_total)))
     s_total = Sample.from_frame(sample_df_total, id_column='_id', outcome_columns=[])
-    t_total = Sample.from_frame(t_df_total,      id_column='_id', outcome_columns=[])
+    t_total = Sample.from_frame(t_df_total, id_column='_id', outcome_columns=[])
     adjusted_total = s_total.set_target(t_total).adjust(method='rake').trim(ratio=3)
-    print(adjusted_total.summary())
-    print(adjusted_total.weights().summary())
-    adjusted_total.covars().plot()
     return adjusted_total
