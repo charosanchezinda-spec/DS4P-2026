@@ -19,7 +19,6 @@ try:
     os.environ["CONTRASENA_HASH"] = st.secrets["CONTRASENA_HASH"]
 except Exception:
     load_dotenv()
-from balance import Sample
 from carga import cargar_datos
 from tracking import calcular_tracking
 from limpieza import limpiar, normalizar
