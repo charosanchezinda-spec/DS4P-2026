@@ -151,14 +151,7 @@ elif seccion == "📂 Carga de encuesta":
         st.session_state.tipo_track = tipo_track
         st.session_state.procesado = True
         # Registrar en base de datos
-        sample_df_total = df[vars_rake].copy().reset_index(drop=True)
-        sample_df_total.insert(0, '_id', range(len(sample_df_total)))
-        t_df_total = target_df.copy()
-        if '_id' not in t_df_total.columns:
-            t_df_total.insert(0, '_id', range(len(t_df_total)))
-        s_total = Sample.from_frame(sample_df_total, id_column='_id', outcome_columns=[])
-        t_total = Sample.from_frame(t_df_total,      id_column='_id', outcome_columns=[])
-        adjusted_total = s_total.set_target(t_total).adjust(method='rake').trim(ratio=3)
+        adjusted_total = generar_reporte(df, target_df, vars_rake)
         pesos_w = adjusted_total.weights().df['weight']
         deff    = float(1 + (pesos_w.var() / pesos_w.mean()**2))
         ess     = float((pesos_w.sum()**2) / (pesos_w**2).sum())
