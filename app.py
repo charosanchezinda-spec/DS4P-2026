@@ -282,20 +282,14 @@ elif seccion == "📊 Dashboard analítico":
         st.dataframe(pesos_summary.set_index('var'))
     # Intervalos de confianza
     st.divider()
-    st.subheader("Intervalos de confianza (95%)")
-    ic_img, ic_vot = calcular_intervalos(df, tipo_track)
-    st.dataframe(ic_img, use_container_width=True)
-    # Test de hipótesis
-    st.divider()
     st.subheader("Test de hipótesis — cambio en la imagen")
-    tstat, pval = test_hipotesis(df)
+    tstat, pval, rechaza_h0 = test_hipotesis(df)
     col_t1, col_t2 = st.columns(2)
     with col_t1:
         st.metric("Estadístico", round(float(tstat), 4))
     with col_t2:
         st.metric("p-value", round(pval, 4))
-    alpha = 0.05
-    if pval < alpha:
+    if rechaza_h0:
         st.warning("Se RECHAZA H0: la imagen cambió significativamente.")
     else:
         st.info("NO se rechaza H0: no hay evidencia de cambio significativo.")
