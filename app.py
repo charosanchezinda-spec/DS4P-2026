@@ -21,6 +21,7 @@ except Exception:
     load_dotenv()
 from balance import Sample
 from carga import cargar_datos
+from tracking import calcular_tracking
 from limpieza import limpiar, normalizar
 from imputacion import imputar
 from ventanas import crear_ventanas
@@ -207,13 +208,9 @@ elif seccion == "📊 Dashboard analítico":
     with col_k3:
         st.metric("Ventana", {"d": "Diaria", "s": "Semanal", "m": "Mensual"}[tipo_track])
     st.divider()
-    # Tracking imagen
+     # Tracking
     st.subheader("Tracking electoral")
-    tracking_imagen = (
-        df.groupby(ventana_col)
-        .apply(lambda g: np.average(g['imagen_del_candidato'], weights=g[peso_col]))
-        .reset_index(name='trackeo')
-    )
+    tracking_imagen, tracking_voto = calcular_tracking(df, ventana_col, peso_col)
     tracking_imagen_plot = tracking_imagen.copy()
     tracking_imagen_plot[ventana_col] = tracking_imagen_plot[ventana_col].astype(str)
     fig1 = px.line(
@@ -225,18 +222,6 @@ elif seccion == "📊 Dashboard analítico":
         labels={ventana_col: 'Ventana', 'trackeo': 'Imagen promedio'}
     )
     st.plotly_chart(fig1, use_container_width=True)
-    # Tracking voto
-    candidatos = df['voto'].unique().tolist()
-    for c in candidatos:
-        df[f'vota_{c}'] = (df['voto'] == c).astype(int)
-    tracking_voto = (
-        df.groupby(ventana_col)
-        .apply(lambda g: pd.Series({
-            f"Vota_{c}": np.average(g[f'vota_{c}'], weights=g[peso_col]) * 100
-            for c in candidatos
-        }))
-        .reset_index()
-    )
     tv = tracking_voto.copy()
     tv[ventana_col] = tv[ventana_col].astype(str)
     cols_voto = [col for col in tv.columns if col.startswith('Vota_')]
