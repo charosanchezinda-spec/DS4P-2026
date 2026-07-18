@@ -32,7 +32,6 @@ def crear_metrica(metrica: MetricaCreate, db: Session = Depends(get_db)):
 
 @router.get("/metricas/{corrida_id}", dependencies=[Depends(verificar_api_key)])
 def obtener_metrica(corrida_id: int, db: Session = Depends(get_db)):
-    from base_datos import MetricaDB
     metrica = db.query(MetricaDB).filter(MetricaDB.corrida_id == corrida_id).first()
     if not metrica:
         return {"metrica": None}
