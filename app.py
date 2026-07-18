@@ -167,9 +167,19 @@ elif seccion == "📂 Carga de encuesta":
             timeout=60
         )
         corrida_id = resp_corrida.json()["corrida_id"]
-        db = next(get_db())
-        registrar_metricas(db, corrida_id, float(deff), float(ess), float(essp), float(pesos_w.max()), float(pesos_w.min()))
-        db.close()
+        requests.post(
+            f"{os.getenv('API_URL')}/metricas",
+            headers={"x-api-key": os.getenv("API_KEY")},
+            json={
+                "corrida_id": corrida_id,
+                "deff": deff,
+                "ess": ess,
+                "essp": essp,
+                "peso_max": float(pesos_w.max()),
+                "peso_min": float(pesos_w.min())
+            },
+            timeout=60
+        )
         st.success(f"Ponderación completada. Corrida registrada (id={corrida_id})")
         st.info("Vaya al **Dashboard analítico** en el menú lateral para ver los resultados.")
 # ==========================================
