@@ -28,7 +28,13 @@ from estadistica import calcular_intervalos, test_hipotesis
 from base_datos import registrar_metricas, get_db, CorridaDB, MetricaDB
 
 # ==========================================
-# 0. LOGIN
+# 0. CONFIGURACIÓN DE PÁGINA
+# ==========================================
+
+st.set_page_config(page_title="Sistema de Ponderación Muestral", page_icon="📊", layout="wide")
+
+# ==========================================
+# 1. LOGIN
 # ==========================================
 
 if 'autenticado' not in st.session_state:
@@ -46,12 +52,6 @@ if not st.session_state.autenticado:
         else:
             st.error("Usuario o contraseña incorrectos.")
     st.stop()
-
-# ==========================================
-# 1. CONFIGURACIÓN DE PÁGINA
-# ==========================================
-
-st.set_page_config(page_title="Sistema de Ponderación Muestral", page_icon="📊", layout="wide")
 
 # ==========================================
 # 2. NAVEGACIÓN SIDEBAR
