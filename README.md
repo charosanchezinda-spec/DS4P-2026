@@ -94,7 +94,7 @@ La aplicación se abre en: `http://localhost:8501`
 | estrato | Provincia, municipio, región del respondente |
 | sexo | femenino / masculino |
 | edad | Edad en años (mínimo 16) |
-| nivel_educativo | prim / sec / terc / univ / pos |
+| nivel_educativo | de sin estudios hasta posgrado |
 | cantidad_de_integrantes_en_el_hogar | Número entero |
 | imagen_del_candidato | Escala 0-100 (los ns/nc se imputan) |
 | voto | Nombre del candidato (los ns/nc se imputan) |
