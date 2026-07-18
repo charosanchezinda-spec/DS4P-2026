@@ -52,13 +52,13 @@ if not st.session_state.autenticado:
 # 1. CONFIGURACIÓN DE PÁGINA
 # ==========================================
 
-st.set_page_config(page_title="Sistema de Ponderación Electoral", page_icon="📊", layout="wide")
+st.set_page_config(page_title="Sistema de Ponderación Muestral", page_icon="📊", layout="wide")
 
 # ==========================================
 # 2. NAVEGACIÓN SIDEBAR
 # ==========================================
 
-st.sidebar.title("📊 Sistema Electoral")
+st.sidebar.title("📊 Sistema de Ponderación")
 st.sidebar.markdown(f"Usuario: **{os.getenv('USUARIO')}**")
 st.sidebar.divider()
 seccion = st.sidebar.radio(
@@ -75,7 +75,7 @@ if st.sidebar.button("Cerrar sesión"):
 # ==========================================
 
 if seccion == "🏠 Inicio":
-    st.title("📊 Sistema de Ponderación Electoral mediante Raking")
+    st.title("📊 Sistema de Ponderación Muestral mediante Raking")
     st.markdown("""
     Esta es una aplicación de ponderación muestral construida 100% en Python.
     Permite a los usuarios cargar sus encuestas, elegir la población target y elegir la ventana temporal
