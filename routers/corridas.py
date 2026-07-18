@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from schemas import CorridaCreate
-from base_datos import get_db, CorridaDB, registrar_corrida
+from schemas import CorridaCreate, MetricaCreate
+from base_datos import get_db, CorridaDB, MetricaDB, registrar_corrida, registrar_metricas
 from security import verificar_api_key
 
 router = APIRouter()
