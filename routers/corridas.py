@@ -24,3 +24,8 @@ def listar_corridas(db: Session = Depends(get_db)):
         }
         for c in corridas
     ]}
+
+@router.post("/metricas", dependencies=[Depends(verificar_api_key)])
+def crear_metrica(metrica: MetricaCreate, db: Session = Depends(get_db)):
+    registrar_metricas(db, metrica.corrida_id, metrica.deff, metrica.ess, metrica.essp, metrica.peso_max, metrica.peso_min)
+    return {"mensaje": "Métrica registrada correctamente."}
