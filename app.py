@@ -25,7 +25,6 @@ from imputacion import imputar
 from ventanas import crear_ventanas
 from ponderacion import obtener_targets_desde_censo, ponderar, POBLACIONES, generar_reporte
 from estadistica import calcular_intervalos, test_hipotesis
-from base_datos import registrar_metricas, get_db, CorridaDB, MetricaDB
 
 # ==========================================
 # 0. CONFIGURACIÓN DE PÁGINA
