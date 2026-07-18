@@ -1,5 +1,6 @@
 # Sistema de Ponderación Electoral
 **DS4P 2026 — Ciencia de Datos para Politólogos — UBA Sociales**
+**Alumnos: María José Perez Morinigo, Rosario Sofio, Gonzalo Murta y Charo Sanchez Inda**
  
 ---
  
@@ -26,20 +27,29 @@ El sistema resuelve un problema concreto del trabajo con encuestas electorales: 
 ## Arquitectura
  
 ```
-.env                  → variables de configuración (solo local)
-main.py               → API FastAPI con patrón Repository
+── API ──────────────────────────────────────
+main.py               → punto de entrada FastAPI, registra routers
+security.py           → verificación de API key
+repository.py         → clase CensoRepository con parámetros del Censo 2022
 schemas.py            → validación de datos con Pydantic
 base_datos.py         → ORM SQLAlchemy + PostgreSQL en Neon
-app.py                → frontend Streamlit
+routers/
+├── censo.py          → endpoints de censo y poblaciones
+├── corridas.py       → endpoints de corridas y métricas
+└── ml.py             → endpoint de predicción
+
+── PIPELINE ─────────────────────────────────
+carga.py              → carga y validación del archivo de encuesta
+limpieza.py           → limpieza y normalización de variables
+imputacion.py         → imputación con modelos pre-entrenados
+ventanas.py           → creación de ventanas temporales
+ponderacion.py        → raking, trimming y reporte de calibración
+tracking.py           → cálculo de tracking
+estadistica.py        → intervalos de confianza y test de hipótesis
 entrenar_modelo.py    → entrenamiento y serialización de modelos ML
-│
-├── carga.py          → carga y validación del archivo de encuesta
-├── limpieza.py       → limpieza y normalización de variables
-├── imputacion.py     → imputación con modelos pre-entrenados
-├── ventanas.py       → creación de ventanas temporales
-├── ponderacion.py    → raking, trimming y advertencias
-├── tracking.py       → tracking de imagen e intención de voto
-└── estadistica.py    → intervalos de confianza y test de hipótesis
+
+── FRONTEND ─────────────────────────────────
+app.py                → frontend Streamlit
 ```
  
 ---
@@ -134,6 +144,8 @@ La aplicación se abre en: `http://localhost:8501`
 | `/predecir` | GET | Predicción de intención de voto 🔒|
 | `/corridas` | POST | Registrar una corrida 🔒|
 | `/corridas` | GET | Historial de corridas 🔒|
+| `/metricas` | POST | Registrar métricas de una corrida 🔒|
+| `/metricas/{corrida_id}` | GET | Métricas de una corrida 🔒|
 | `/docs` | GET | Documentación interactiva |
  
 Los endpoints marcados con 🔒 requieren `x-api-key` en el header.
@@ -142,13 +154,20 @@ Los endpoints marcados con 🔒 requieren `x-api-key` en el header.
  
 ## Machine Learning
  
-El sistema usa tres modelos entrenados con scikit-learn:
+El sistema implementa aprendizaje incremental con tres modelos de scikit-learn:
  
 - **`modelo_voto_anterior.joblib`** — regresión logística para imputar voto anterior
 - **`modelo_voto.joblib`** — regresión logística para imputar intención de voto
 - **`modelo_imagen.joblib`** — regresión lineal para imputar imagen del candidato
-
-Los modelos son demostrativos, entrenados con datos sintéticos, generados mediante Inteligencia Artificial.
+**Flujo de aprendizaje incremental:**
+ 
+1. Al iniciar, `imputacion.py` carga los modelos pre-entrenados y los datos acumulados de encuestas anteriores
+2. Al procesar una encuesta nueva, imputa los valores faltantes combinando el modelo pre-entrenado con los casos que sí tienen valor en esa encuesta
+3. Al terminar, re-entrena el modelo usando los datos acumulados anteriores más los datos reales de la encuesta nueva (no los imputados)
+4. Sobreescribe los `.joblib` con el modelo actualizado
+5. La próxima encuesta parte de un modelo entrenado con todos los datos históricos reales acumulados
+ 
+El endpoint `/predecir` de la API usa los modelos cargados al iniciar para hacer inferencias en tiempo real sobre el perfil sociodemográfico de un encuestado.
  
 ---
  
