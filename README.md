@@ -1,5 +1,6 @@
 # Sistema de Ponderación Electoral
 **DS4P 2026 — Ciencia de Datos para Politólogos — UBA Sociales**
+
 **Alumnos: María José Perez Morinigo, Rosario Sofio, Gonzalo Murta y Charo Sanchez Inda**
  
 ---
