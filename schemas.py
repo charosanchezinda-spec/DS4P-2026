@@ -18,3 +18,10 @@ class CorridaCreate(BaseModel):
         if v not in POBLACIONES_VALIDAS:
             raise ValueError("Población no válida. Consulte /poblaciones para ver las opciones.")
         return v
+class MetricaCreate(BaseModel):
+    corrida_id: int
+    deff: float
+    ess: float
+    essp: float
+    peso_max: float
+    peso_min: float
