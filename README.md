@@ -154,21 +154,24 @@ Los endpoints marcados con 🔒 requieren `x-api-key` en el header.
 ---
  
 ## Machine Learning
- 
+
 El sistema implementa aprendizaje incremental con tres modelos de scikit-learn:
- 
-- **`modelo_voto_anterior.joblib`** — regresión logística para imputar voto anterior
-- **`modelo_voto.joblib`** — regresión logística para imputar intención de voto
-- **`modelo_imagen.joblib`** — regresión lineal para imputar imagen del candidato
-**Flujo de aprendizaje incremental:**
- 
-1. Al iniciar, `imputacion.py` carga los modelos pre-entrenados y los datos acumulados de encuestas anteriores
-2. Al procesar una encuesta nueva, imputa los valores faltantes combinando el modelo pre-entrenado con los casos que sí tienen valor en esa encuesta
-3. Al terminar, re-entrena el modelo usando los datos acumulados anteriores más los datos reales de la encuesta nueva (no los imputados)
-4. Sobreescribe los `.joblib` con el modelo actualizado
-5. La próxima encuesta parte de un modelo entrenado con todos los datos históricos reales acumulados
- 
-El endpoint `/predecir` de la API usa los modelos cargados al iniciar para hacer inferencias en tiempo real sobre el perfil sociodemográfico de un encuestado.
+
+- `modelo_voto_anterior.joblib` — regresión logística para imputar voto anterior
+- `modelo_voto.joblib` — regresión logística para imputar intención de voto
+- `modelo_imagen.joblib` — regresión lineal para imputar imagen del candidato
+
+Flujo de aprendizaje incremental:
+
+- `entrenar_modelo.py` inicializa el sistema entrenando los modelos sobre la encuesta ficticia y genera los `.joblib` iniciales
+- Al procesar una encuesta nueva, `imputacion.py` imputa los valores faltantes combinando el modelo pre-entrenado con los casos observados de esa encuesta
+- Una vez finalizada la imputación, re-entrena los modelos únicamente con los casos observados (no con los imputados), incorporándolos al histórico acumulado
+- Sobreescribe los `.joblib` con las nuevas versiones
+- El endpoint `/predecir` de la API usa esos modelos actualizados cuando se reinicia FastAPI
+
+Decisión metodológica: el reentrenamiento se realiza exclusivamente con los valores originalmente observados de cada nueva encuesta. Los valores imputados se utilizan únicamente para completar la base de análisis y permitir el procesamiento del tracking, pero no se incorporan al entrenamiento. Esto evita el problema de self-training no supervisado, donde un modelo aprende de sus propias predicciones y puede amplificar errores a lo largo del tiempo.
+
+Para generar los modelos iniciales correr `entrenar_modelo.py`. La estrategia óptima de features depende de cada dataset.
  
 ---
  
