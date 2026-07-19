@@ -53,11 +53,11 @@ def _generar_id_encuesta(df):
 def evaluar_modelos(df):
     print("Evaluación de modelos para imputación:regresión logística y regresión lineal\n")
     print("EVALUACIÓN VOTO_ANTERIOR\n")
-    columnas_va = ["edad", "sexo", "nivel_educativo", "voto_anterior",
+    columnas_va = ["edad", "sexo", "nivel_educativo", "estrato", "voto_anterior",
     ]
     df_eval_va = (df[columnas_va].dropna().copy())
     if (len(df_eval_va) >= 10 and df_eval_va["voto_anterior"].nunique() >= 2):
-        features_va_eval = ["edad", "sexo", "nivel_educativo",]
+        features_va_eval = ["edad", "sexo", "nivel_educativo", "estrato"]
         X_va = pd.get_dummies(df_eval_va[features_va_eval],drop_first=True,)
         y_va = df_eval_va["voto_anterior"].astype("category")
         y_va_num = y_va.cat.codes
@@ -85,10 +85,10 @@ def evaluar_modelos(df):
     # VOTO ACTUAL
     # ------------------------------------------
     print("\nEVALUACIÓN VOTO\n")
-    columnas_voto = ["edad", "sexo", "nivel_educativo","voto_anterior","voto"]
+    columnas_voto = ["edad", "sexo", "nivel_educativo", "estrato", "voto_anterior","voto"]
     df_eval_v = (df[columnas_voto].dropna().copy())
     if (len(df_eval_v) >= 10 and df_eval_v["voto"].nunique() >= 2):
-        features_voto_eval = ["edad", "sexo", "nivel_educativo", "voto_anterior",]
+        features_voto_eval = ["edad", "sexo", "nivel_educativo", "estrato", "voto_anterior",]
         X_v = pd.get_dummies(df_eval_v[features_voto_eval], drop_first=True)
         y_v = df_eval_v["voto"].astype("category")
         y_v_num = y_v.cat.codes
@@ -117,10 +117,10 @@ def evaluar_modelos(df):
     # ------------------------------------------
 
     print("\nEVALUACIÓN IMAGEN_DEL_CANDIDATO\n")
-    columnas_img = ["edad", "sexo", "nivel_educativo", "voto", "voto_anterior", "imagen_del_candidato"]
+    columnas_img = ["edad", "sexo", "nivel_educativo", "estrato", "voto", "voto_anterior", "imagen_del_candidato"]
     df_eval_img = (df[columnas_img].dropna().copy())
     if len(df_eval_img) >= 10:
-        features_img_eval = ["edad","sexo","nivel_educativo","voto","voto_anterior"]
+        features_img_eval = ["edad","sexo","nivel_educativo", "estrato", "voto","voto_anterior"]
         X_img = pd.get_dummies(df_eval_img[features_img_eval],drop_first=True)
         y_img = df_eval_img["imagen_del_candidato"]
         (X_train_img, X_test_img, y_train_img, y_test_img) = train_test_split(X_img, y_img, test_size=0.3, random_state=42,)
