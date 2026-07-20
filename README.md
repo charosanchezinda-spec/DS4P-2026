@@ -170,6 +170,7 @@ El sistema implementa aprendizaje incremental con tres modelos de scikit-learn:
 5. Una vez finalizada la imputación, re-entrena los modelos usando los datos acumulados anteriores más los casos observados de la encuesta nueva
 6. Sobreescribe los `.joblib` con las versiones actualizadas
 7. El endpoint `/predecir` usa esos modelos actualizados cuando se reinicia FastAPI
+
 **Decisión metodológica:** el reentrenamiento se realiza exclusivamente con los valores originalmente observados de cada nueva encuesta. Los valores imputados se utilizan únicamente para completar la base de análisis y permitir el procesamiento del tracking, pero no se incorporan al entrenamiento. Esto evita el problema de self-training no supervisado, donde un modelo aprende de sus propias predicciones y puede amplificar errores a lo largo del tiempo.
  
 ---
