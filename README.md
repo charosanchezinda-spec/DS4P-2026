@@ -160,6 +160,7 @@ El sistema implementa aprendizaje incremental con tres modelos de scikit-learn:
 - **`modelo_voto_anterior.joblib`** — regresión logística para imputar voto anterior
 - **`modelo_voto.joblib`** — regresión logística para imputar intención de voto
 - **`modelo_imagen.joblib`** — regresión lineal para imputar imagen del candidato
+
 **Flujo de aprendizaje incremental:**
  
 1. `entrenar_modelo.py` inicializa el sistema entrenando los modelos sobre la encuesta ficticia y genera los `.joblib` iniciales junto con los datos históricos
