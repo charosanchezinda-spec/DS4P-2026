@@ -172,6 +172,8 @@ El sistema implementa aprendizaje incremental con tres modelos de scikit-learn:
 7. El endpoint `/predecir` usa esos modelos actualizados cuando se reinicia FastAPI
 
 **Decisión metodológica:** el reentrenamiento se realiza exclusivamente con los valores originalmente observados de cada nueva encuesta. Los valores imputados se utilizan únicamente para completar la base de análisis y permitir el procesamiento del tracking, pero no se incorporan al entrenamiento. Esto evita el problema de self-training no supervisado, donde un modelo aprende de sus propias predicciones y puede amplificar errores a lo largo del tiempo.
+
+**Limitación conocida:** el sistema asume estabilidad en los candidatos entre encuestas. Si cambia la oferta electoral (candidatos nuevos o que desaparecen), el modelo puede predecir candidatos que ya no existen o ignorar los nuevos hasta incorporarlos al histórico. Para campañas con cambios significativos en la oferta electoral se recomienda re-inicializar el histórico corriendo `entrenar_modelo.py` con una encuesta actualizada.
  
 ---
  
