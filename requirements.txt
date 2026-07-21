@@ -12,8 +12,6 @@ requests
 sqlalchemy
 python-dotenv
 openpyxl
-passlib[bcrypt]
-python-jose[cryptography]
 pydantic
 joblib
 psycopg2-binary
