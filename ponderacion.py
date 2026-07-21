@@ -37,7 +37,7 @@ def obtener_targets_desde_censo(poblacion, hay_municipios_bsas, df):
         elif poblacion == "nacional":
             df['region'] = df['estrato'].map({
                 'buenos aires': 'Región Metropolitana',
-                'ciudad autónoma de buenos aires' 'Región Metropolitana',
+                'ciudad autónoma de buenos aires': 'Región Metropolitana',
                 'córdoba': 'Región Pampeana',
                 'entre ríos': 'Región Pampeana',
                 'la pampa': 'Región Pampeana',
