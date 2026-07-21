@@ -41,7 +41,7 @@ if 'autenticado' not in st.session_state:
 if not st.session_state.autenticado:
     st.title("🔐 Iniciar sesión")
     st.markdown("Ingrese sus credenciales para acceder al sistema.")
-    usuario    = st.text_input("Usuario")
+    usuario = st.text_input("Usuario")
     contrasena = st.text_input("Contraseña", type="password")
     if st.button("Ingresar"):
         hash_guardado = os.getenv("CONTRASENA_HASH").encode()
