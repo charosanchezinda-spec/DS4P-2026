@@ -19,7 +19,7 @@ from sklearn.metrics import (
 # ==========================================
 
 DIRECTORIO_BASE = os.path.dirname(os.path.abspath(__file__))
-RUTA_ENCUESTA = os.path.join(DIRECTORIO_BASE,"encuesta_ficticia_nacional_2.csv")
+RUTA_ENCUESTA = os.path.join(DIRECTORIO_BASE,"tu_encuesta.csv") #agregarle el nombre del archivo
 def construir_ruta(nombre_archivo):
     return os.path.join(DIRECTORIO_BASE, nombre_archivo)
 def generar_id_encuesta(df):
