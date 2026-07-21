@@ -36,30 +36,30 @@ def obtener_targets_desde_censo(poblacion, hay_municipios_bsas, df):
             print("  Variable 'estrato_bsas' agregada (GBA/interior).")
         elif poblacion == "nacional":
             df['region'] = df['estrato'].map({
-                'buenos aires':                      'Región Metropolitana',
-                'ciudad autónoma de buenos aires':   'Región Metropolitana',
-                'córdoba':                           'Región Pampeana',
-                'entre ríos':                        'Región Pampeana',
-                'la pampa':                          'Región Pampeana',
-                'santa fe':                          'Región Pampeana',
-                'catamarca':                         'Región NOA',
-                'jujuy':                             'Región NOA',
-                'la rioja':                          'Región NOA',
-                'salta':                             'Región NOA',
-                'santiago del estero':               'Región NOA',
-                'tucumán':                           'Región NOA',
-                'chaco':                             'Región NEA',
-                'corrientes':                        'Región NEA',
-                'formosa':                           'Región NEA',
-                'misiones':                          'Región NEA',
-                'mendoza':                           'Región Cuyo',
-                'san juan':                          'Región Cuyo',
-                'san luis':                          'Región Cuyo',
-                'chubut':                            'Región Patagonia',
-                'neuquén':                           'Región Patagonia',
-                'río negro':                         'Región Patagonia',
-                'santa cruz':                        'Región Patagonia',
-                'tierra del fuego':                  'Región Patagonia',
+                'buenos aires': 'Región Metropolitana',
+                'ciudad autónoma de buenos aires' 'Región Metropolitana',
+                'córdoba': 'Región Pampeana',
+                'entre ríos': 'Región Pampeana',
+                'la pampa': 'Región Pampeana',
+                'santa fe': 'Región Pampeana',
+                'catamarca': 'Región NOA',
+                'jujuy': 'Región NOA',
+                'la rioja': 'Región NOA',
+                'salta': 'Región NOA',
+                'santiago del estero': 'Región NOA',
+                'tucumán': 'Región NOA',
+                'chaco': 'Región NEA',
+                'corrientes': 'Región NEA',
+                'formosa': 'Región NEA',
+                'misiones': 'Región NEA',
+                'mendoza': 'Región Cuyo',
+                'san juan': 'Región Cuyo',
+                'san luis': 'Región Cuyo',
+                'chubut': 'Región Patagonia',
+                'neuquén': 'Región Patagonia',
+                'río negro': 'Región Patagonia',
+                'santa cruz': 'Región Patagonia',
+                'tierra del fuego': 'Región Patagonia',
             })
             respuesta_region = requests.get(f"{API_URL}/region-nacional", headers=HEADERS, timeout=10)
             respuesta_region.raise_for_status()
@@ -77,23 +77,23 @@ def ponderar(df, targets):
     df['peso_m'] = 1
     for var in targets.keys():
         df[var] = df[var].astype(str)
-    target_df      = prepare_marginal_dist_for_raking(targets)
+    target_df = prepare_marginal_dist_for_raking(targets)
     target_weights = pd.Series(1.0, index=target_df.index, name="w_target")
-    vars_rake      = list(targets.keys())
+    vars_rake = list(targets.keys())
     def aplicar_rake_diario(grupo):
         try:
             res = rake(
-                sample_df      = grupo[vars_rake],
+                sample_df = grupo[vars_rake],
                 sample_weights = grupo['peso_d'],
-                target_df      = target_df,
+                target_df = target_df,
                 target_weights = target_weights,
-                variables      = vars_rake
+                variables = vars_rake
             )
             pesos = res['weight'].values
             promedio = np.mean(pesos)
             grupo['peso_d'] = np.clip(pesos, promedio / 3, promedio * 3)
             deff = 1 + (pesos.var() / pesos.mean()**2)
-            cv   = pesos.std() / pesos.mean() * 100
+            cv = pesos.std() / pesos.mean() * 100
             if deff > 2.5:
                 advertencias.append(f"ADVERTENCIA ventana {grupo.name}: Deff alto ({round(deff, 2)}). Considere ampliar la ventana.")
             if cv > 80:
@@ -106,11 +106,11 @@ def ponderar(df, targets):
     def aplicar_rake_semanal(grupo):
         try:
             res = rake(
-                sample_df      = grupo[vars_rake],
+                sample_df = grupo[vars_rake],
                 sample_weights = grupo['peso_s'],
-                target_df      = target_df,
+                target_df = target_df,
                 target_weights = target_weights,
-                variables      = vars_rake
+                variables = vars_rake
             )
             pesos = res['weight'].values
             promedio = np.mean(pesos)
@@ -129,17 +129,17 @@ def ponderar(df, targets):
     def aplicar_rake_mensual(grupo):
         try:
             res = rake(
-                sample_df      = grupo[vars_rake],
+                sample_df = grupo[vars_rake],
                 sample_weights = grupo['peso_m'],
-                target_df      = target_df,
+                target_df = target_df,
                 target_weights = target_weights,
-                variables      = vars_rake
+                variables = vars_rake
             )
             pesos = res['weight'].values
             promedio = np.mean(pesos)
             grupo['peso_m'] = np.clip(pesos, promedio / 3, promedio * 3)
             deff = 1 + (pesos.var() / pesos.mean()**2)
-            cv   = pesos.std() / pesos.mean() * 100
+            cv = pesos.std() / pesos.mean() * 100
             if deff > 2.5:
                 advertencias.append(f"ADVERTENCIA ventana {grupo.name}: Deff alto ({round(deff, 2)}). Considere ampliar la ventana.")
             if cv > 80:
@@ -149,8 +149,8 @@ def ponderar(df, targets):
             w = grupo['peso_m'].fillna(1)
             grupo['peso_m'] = w / w.mean()
         return grupo
-    df_rake_diario  = df.groupby('Ventana_D', group_keys=False).apply(aplicar_rake_diario)
-    df_rake_semana  = df.groupby('Ventana_S', group_keys=False).apply(aplicar_rake_semanal)
+    df_rake_diario = df.groupby('Ventana_D', group_keys=False).apply(aplicar_rake_diario)
+    df_rake_semana = df.groupby('Ventana_S', group_keys=False).apply(aplicar_rake_semanal)
     df_rake_mensual = df.groupby('Ventana_M', group_keys=False).apply(aplicar_rake_mensual)
     df['peso_d'] = df_rake_diario['peso_d']
     df['peso_s'] = df_rake_semana['peso_s']
