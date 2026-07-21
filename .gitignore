@@ -1,7 +1,4 @@
 .env
 tracking_electoral.db
 __pycache__/
-*.pyc
-*.pkl
-*.joblib
 .streamlit/secrets.toml
